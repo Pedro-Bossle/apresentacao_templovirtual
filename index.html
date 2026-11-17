@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Templo Virtual · Apresentações ao vivo</title>
+<link rel="icon" href="src/img/logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070d1a;--card:#101b31;--line:rgba(236,235,231,.12);--tx:#ecebe7;--mut:#9aa3b5;--gold:#f2b51c}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(900px 600px at 90% 110%,rgba(7,45,90,.7),transparent 60%),var(--bg);color:var(--tx);font-family:Outfit,system-ui,sans-serif;min-height:100vh}
+  main{max-width:980px;margin:0 auto;padding:48px 22px}
+  header{display:flex;align-items:center;gap:14px}
+  header img{width:52px;height:52px}
+  .k{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--gold)}
+  h1{font-size:clamp(30px,5vw,46px);margin:28px 0 8px;font-weight:600}
+  p{color:var(--mut);line-height:1.5;max-width:640px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:30px}
+  a.c{display:block;text-decoration:none;color:var(--tx);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;transition:transform .15s,border-color .15s}
+  a.c:hover{transform:translateY(-3px);border-color:var(--gold)}
+  a.c b{display:block;font-size:20px;margin:10px 0 4px}
+  a.c span{color:var(--mut);font-size:14px}
+  .sw{height:8px;border-radius:9px}
+</style>
+</head>
+<body>
+<main>
+  <header><img src="src/img/logo.svg" alt=""><div><div class="k">TEMPLO VIRTUAL</div><div>Apresentações ao vivo</div></div></header>
+  <h1>Escolha a apresentação</h1>
+  <p>Cada uma abre a página da sala, com os links do telão, do passador, do roteiro e da plateia. Abra no computador ligado ao projetor.</p>
+  <div class="grid">
+    <a class="c" href="demolay.html"><div class="sw" style="background:linear-gradient(90deg,#072d5a,#f2b51c)"></div><b>Ordem DeMolay</b><span>Capítulos · 16 slides</span></a>
+    <a class="c" href="filhas-de-jo.html"><div class="sw" style="background:linear-gradient(90deg,#ffffff,#5b2a86,#d4af37)"></div><b>Filhas de Jó</b><span>Bethéis · 14 slides</span></a>
+    <a class="c" href="lojas.html"><div class="sw" style="background:linear-gradient(90deg,#f5f2ea,#072d5a,#cd991f)"></div><b>Lojas Maçônicas</b><span>Projeto sob medida · 13 slides</span></a>
+    <a class="c" href="estrela-do-oriente.html"><div class="sw" style="background:linear-gradient(90deg,#3b6fd8,#f2c230,#f4f4f4,#3aa864,#d8413a)"></div><b>Estrela do Oriente</b><span>Capítulos · 14 slides</span></a>
+  </div>
+</main>
+</body>
+</html>
