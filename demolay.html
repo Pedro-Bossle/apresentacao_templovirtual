@@ -137,6 +137,12 @@ a{color:var(--gold)}
 .stage .star5{filter:drop-shadow(0 30px 60px rgba(0,0,0,.45));animation:spin 60s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+.stage .expand{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:4px}
+.stage .expand>span{font-size:18px;letter-spacing:.18em;color:var(--mut);margin-right:6px}
+.stage .exp{display:flex;align-items:center;gap:14px;background:var(--card);border:1.5px dashed var(--line2);border-radius:99px;padding:8px 26px 8px 8px}
+.stage .exp img{width:64px;height:64px;object-fit:contain}
+.stage .exp i{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--inset);border:1px solid var(--line2);font-style:normal;font-family:var(--m);font-size:18px;color:var(--gold)}
+.stage .exp b{font-size:24px;font-weight:500}
 /* live layers on the projector */
 .layer{position:absolute;inset:0;pointer-events:none}
 .layer.black{background:#000;opacity:0;transition:opacity .35s}
@@ -2627,6 +2633,10 @@ const STAR5 = (size=360) => {
   return `<svg class="star5" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true">${tris}<path d="M${pts.map(p=>p.join(' ')).join('L')}Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".6"/></svg>`;
 };
 
+// Selo de organização "em expansão": usa a logo de src/img (apj/arco/oes) quando existir.
+const expOrg = (key, sigla, nome) =>
+  `<div class="exp">${IMG[key] ? `<img src="${IMG[key]}" alt="Emblema ${nome}">` : `<i>${sigla}</i>`}<b>${nome}</b></div>`;
+
 const META = { key:'odm', name:'Ordem DeMolay', footTag:'', siteUrl:'https://www.templovirtual.app' };
 // Conteúdo da apresentação. Cada slide: título, tempo previsto (s), notas do roteiro,
 // links citados (aparecem no celular da plateia), votação opcional e o HTML do slide (1600×900).
@@ -2836,7 +2846,7 @@ O consentimento é coletado no cadastro. E quem acompanha pela regional ou estad
     notes: `<b>Ordem DeMolay:</b> capítulos, Escudeiros, Cavalaria e Alumni (odm.templovirtual.app).
 <b>Filhas de Jó:</b> gestão pensada para os Bethéis (fdj.templovirtual.app).
 <b>Lojas Maçônicas:</b> projeto sob medida (loja.templovirtual.app).
-Arco-Íris e Ação Paramaçônica estão em expansão.
+Em expansão: Ação Paramaçônica Juvenil (APJ), Arco-Íris e Estrela do Oriente.
 Os três links já estão no celular de vocês.`,
     html: `<div class="center">
   <div class="kicker">PARA QUEM É</div>
@@ -2846,7 +2856,7 @@ Os três links já estão no celular de vocês.`,
     <div class="org"><img src="${IMG.fdj}" alt="Emblema Filhas de Jó"><h3>Filhas de Jó</h3><p>Gestão pensada para os Bethéis</p><span class="mono">fdj.templovirtual.app</span></div>
     <div class="org"><img src="${IMG.loja}" alt="Emblema maçônico"><h3>Lojas Maçônicas</h3><p>Projeto sob medida</p><span class="mono">loja.templovirtual.app</span></div>
   </div>
-  <p class="small mono">ARCO-ÍRIS E AÇÃO PARAMAÇÔNICA · EM EXPANSÃO</p>
+  <div class="expand"><span class="mono">EM EXPANSÃO</span>${expOrg('apj', 'APJ', 'Ação Paramaçônica Juvenil')}${expOrg('arco', 'AI', 'Arco-Íris')}${expOrg('oes', 'EO', 'Estrela do Oriente')}</div>
 </div>`,
   },
   {

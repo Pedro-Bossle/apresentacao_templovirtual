@@ -207,7 +207,7 @@ O consentimento é coletado no cadastro. E quem acompanha pela regional ou estad
     notes: `<b>Ordem DeMolay:</b> capítulos, Escudeiros, Cavalaria e Alumni (odm.templovirtual.app).
 <b>Filhas de Jó:</b> gestão pensada para os Bethéis (fdj.templovirtual.app).
 <b>Lojas Maçônicas:</b> projeto sob medida (loja.templovirtual.app).
-Arco-Íris e Ação Paramaçônica estão em expansão.
+Em expansão: Ação Paramaçônica Juvenil (APJ), Arco-Íris e Estrela do Oriente.
 Os três links já estão no celular de vocês.`,
     html: `<div class="center">
   <div class="kicker">PARA QUEM É</div>
@@ -217,7 +217,7 @@ Os três links já estão no celular de vocês.`,
     <div class="org"><img src="${IMG.fdj}" alt="Emblema Filhas de Jó"><h3>Filhas de Jó</h3><p>Gestão pensada para os Bethéis</p><span class="mono">fdj.templovirtual.app</span></div>
     <div class="org"><img src="${IMG.loja}" alt="Emblema maçônico"><h3>Lojas Maçônicas</h3><p>Projeto sob medida</p><span class="mono">loja.templovirtual.app</span></div>
   </div>
-  <p class="small mono">ARCO-ÍRIS E AÇÃO PARAMAÇÔNICA · EM EXPANSÃO</p>
+  <div class="expand"><span class="mono">EM EXPANSÃO</span>${expOrg('apj', 'APJ', 'Ação Paramaçônica Juvenil')}${expOrg('arco', 'AI', 'Arco-Íris')}${expOrg('oes', 'EO', 'Estrela do Oriente')}</div>
 </div>`,
   },
   {

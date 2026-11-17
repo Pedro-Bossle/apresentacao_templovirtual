@@ -24,3 +24,7 @@ const STAR5 = (size=360) => {
     return `<path d="M${cx} ${cy}L${l[0]} ${l[1]}L${p[0]} ${p[1]}L${rt[0]} ${rt[1]}Z" fill="${cols[j]}"/>`; }).join('');
   return `<svg class="star5" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true">${tris}<path d="M${pts.map(p=>p.join(' ')).join('L')}Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".6"/></svg>`;
 };
+
+// Selo de organização "em expansão": usa a logo de src/img (apj/arco/oes) quando existir.
+const expOrg = (key, sigla, nome) =>
+  `<div class="exp">${IMG[key] ? `<img src="${IMG[key]}" alt="Emblema ${nome}">` : `<i>${sigla}</i>`}<b>${nome}</b></div>`;

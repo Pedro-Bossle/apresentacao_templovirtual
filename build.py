@@ -20,6 +20,12 @@ def build(org, out):
     html = rd('src/template.html')
     slides = rd('src/common.js') + '\n' + rd(f'src/orgs/{org}.js')
     imgs = {'logo': uri('src/img/logo.svg', 'image/svg+xml')}
+    # logos opcionais das organizações em expansão (coloque em src/img como apj/arco/oes .webp, .png ou .svg)
+    MIMES = {'.webp': 'image/webp', '.png': 'image/png', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg'}
+    for n in ['apj', 'arco', 'oes']:
+        for ext, mime in MIMES.items():
+            if os.path.exists(os.path.join(D, f'src/img/{n}{ext}')):
+                imgs[n] = uri(f'src/img/{n}{ext}', mime); break
     for n in ['overview', 'secretaria', 'tesouraria', 'gestao', 'comissoes', 'odm', 'fdj', 'loja']:
         imgs[n] = uri(f'src/img/{n}.webp', 'image/webp')
 
