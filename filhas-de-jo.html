@@ -232,6 +232,35 @@ body.v-roteiro .rt{display:grid;grid-template-columns:minmax(320px,38%) 1fr;gap:
 .prog{height:6px;background:var(--inset);border-radius:9px;overflow:hidden;margin-top:10px}
 .prog i{display:block;height:100%;background:var(--gold);width:0;transition:width .4s}
 
+/* ---- toque: sem seleção, sem zoom por toque duplo, sem puxar-para-recarregar ---- */
+body.v-plateia,body.v-passador,body.v-telao,body.v-roteiro{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body.v-plateia textarea,body.v-plateia input{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+body.v-roteiro .notes,body.v-roteiro .qs{-webkit-user-select:text;user-select:text}
+button,a,.btn,.pad,.vopts button,.react-bar button{touch-action:manipulation}
+img,svg{-webkit-user-drag:none;user-drag:none}
+html:has(body.v-passador),body.v-passador{overscroll-behavior:none}
+html:has(body.v-plateia),body.v-plateia{overscroll-behavior-y:contain}
+body.v-passador .app{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+.btn:active{transform:scale(.97)}
+.navrow .btn:active{transform:scale(.96)}
+.swipe-hint{text-align:center;font-family:var(--m);font-size:10px;letter-spacing:.14em;color:var(--mut);margin:-2px 0 8px;text-transform:uppercase}
+.pdf-panel{border-color:var(--gold2);background:linear-gradient(160deg,var(--acc-soft),var(--card) 65%)}
+.pdf-panel.pop{animation:glow 1.6s ease-out}
+.pdf-panel b{display:block;font-size:18px;margin-bottom:4px}
+.pdf-panel .btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;margin-top:12px;height:54px;font-size:16px}
+.toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-140%);background:var(--card);border:1px solid var(--gold2);border-radius:14px;padding:10px 16px;font-size:14px;z-index:30;transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 10px 30px rgba(0,0,0,.35);white-space:nowrap}
+.toast.on{transform:translate(-50%,0)}
+
+/* ---- versão para PDF ---- */
+body.v-pdf{background:#fff}
+body.v-pdf *{animation:none!important;transition:none!important}
+.pdf-page{width:1600px;height:900px;position:relative;overflow:hidden;break-after:page;page-break-after:always}
+.pdf-page .stage{position:relative}
+.stage .pdf-opts{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:30px}
+.stage .vote-side .pdf-opts{justify-content:flex-start}
+.stage .pdf-opts span{border:1.5px solid var(--gold2);border-radius:14px;padding:16px 26px;font-size:26px;color:var(--tx)}
+@media print{@page{size:1600px 900px;margin:0}}
+
 /* launcher */
 .launch{max-width:1100px;margin:0 auto;padding:40px 24px 60px}
 .launch h1{font-size:40px;margin:10px 0 6px}
@@ -2847,13 +2876,13 @@ Abra a última votação: <b>seu Bethel toparia testar?</b>`,
   {
     title: 'Obrigado', time: 120, links: [L.fdj, L.site, L.doc],
     notes: `Agradeça e abra para perguntas. As perguntas enviadas pela plateia aparecem aqui no roteiro.
-Todos os links continuam no celular de cada uma.
+Os links e o PDF da apresentação ficam liberados no celular de cada uma.
 Pedro Bossle: pedro.bossle.s@gmail.com · Lucas Borges: lucasboeiraborges@gmail.com`,
     html: `<div class="cover">
   <div class="cover-l">
     <div class="kicker">OBRIGADO</div>
     <h1>Perguntas?</h1>
-    <p class="lead">Mande pelo celular ou levante a mão. Todos os links desta apresentação continuam no seu celular.</p>
+    <p class="lead">Mande pelo celular ou levante a mão. Os links e o PDF desta apresentação estão no seu celular.</p>
     <div class="contacts">
       <div><b>Pedro Bossle</b><span>programador e cofundador</span><span class="mono">pedro.bossle.s@gmail.com</span></div>
       <div><b>Lucas Borges</b><span>programador e cofundador</span><span class="mono">lucasboeiraborges@gmail.com</span></div>
@@ -2930,7 +2959,8 @@ function slideHTML(i){
 const QR_CACHE = {};
 function fillQR(el){
   el.querySelectorAll('[data-qr]').forEach(q => {
-    const t = q.dataset.qr === 'site' ? (META.siteUrl || 'https://www.templovirtual.app') : (ROOM ? urlFor('plateia') : 'https://www.templovirtual.app');
+    const site = META.siteUrl || 'https://www.templovirtual.app';
+    const t = q.dataset.qr === 'site' ? site : (ROOM && VIEW !== 'pdf' ? urlFor('plateia') : site);
     q.innerHTML = QR_CACHE[t] || (QR_CACHE[t] = qrSvg(t));
   });
 }
@@ -2969,6 +2999,26 @@ function mountStage(box){
     fit,
   };
 }
+
+/* ---------- utilidades de celular ---------- */
+const PDF_URL = BASE.replace(/\.html?$/i, '') + '.pdf';
+const PDF_NAME = 'Templo Virtual - ' + META.name + '.pdf';
+let wakeLock = null;
+async function keepAwake(){
+  try { if ('wakeLock' in navigator && document.visibilityState === 'visible' && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => wakeLock = null); } } catch {}
+}
+function stayAwake(){
+  keepAwake();
+  document.addEventListener('visibilitychange', keepAwake);
+  addEventListener('pointerdown', keepAwake, { passive:true });
+}
+let toastT;
+function toast(msg){
+  let t = $('.toast'); if (!t) { t = h('<div class="toast" role="status"></div>'); document.body.appendChild(t); }
+  t.textContent = msg; requestAnimationFrame(() => t.classList.add('on'));
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600);
+}
+const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
 
 /* ======================= TELÃO (autoridade do estado) ======================= */
 function viewTelao(){
@@ -3076,7 +3126,7 @@ function viewTelao(){
     else if (e.key === 'Home') go(0); else if (e.key === 'End') go(N-1);
   });
   addEventListener('click', e => { if (e.target.closest('.telao-hint')) return; go(S.i+1); });
-  drawPtr(); draw();
+  drawPtr(); draw(); stayAwake();
   window.__telao = { S, cmd, go };
 }
 
@@ -3091,6 +3141,8 @@ function client(role, onState){
   const hb = () => T.send({ t:'hb', uid:UID, role });
   setInterval(hb, 5000); setTimeout(hb, 600);
   setInterval(() => { if (Date.now() - last > 9000) T.send({ t:'hello' }); }, 4000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { T.send({ t:'hello' }); hb(); } });
+  addEventListener('online', () => { T.send({ t:'hello' }); hb(); });
   return { T, get S(){ return S; }, alive: () => Date.now() - last < 10000 };
 }
 
@@ -3101,6 +3153,8 @@ function viewPlateia(){
   root.innerHTML = `<div class="app">
     <div class="top"><img src="${LOGO}" alt=""><div class="t"><b>Templo Virtual</b><span>apresentação ao vivo</span></div><span class="dot" id="conn">conectando</span></div>
     <div class="panel"><span class="tag">CELULAR DA PLATEIA</span><div class="nowbox"><small>agora na tela</small><b id="nowT">Aguardando o telão…</b></div></div>
+    <div class="panel pdf-panel hide" id="pdfP"><div class="lbl">Fim da apresentação</div><b>Leve a apresentação com você</b><span class="muted">Todos os slides num PDF, para rever depois ou repassar a quem não veio.</span>
+      <a class="btn gold" id="pdfA" href="${PDF_URL}" download="${esc(PDF_NAME)}">⬇ Baixar em PDF</a></div>
     <div id="voteBox"></div>
     <div class="panel hide" id="sentP"><div class="lbl">Telas enviadas pelo apresentador</div><div class="gallery" id="gal"></div></div>
     <div class="panel"><div class="lbl">Links citados</div><div class="links" id="links"><p class="muted">Os links aparecem aqui conforme a apresentação avança.</p></div></div>
@@ -3111,8 +3165,13 @@ function viewPlateia(){
   </div>
   <div class="react-bar"><div class="in">${EMOJIS.map(e=>`<button data-e="${e}" aria-label="Reagir ${e}">${e}</button>`).join('')}</div></div>`;
   const myVotes = JSON.parse(store.get('tv-votes-'+ROOM) || '{}');
-  let shownLinks = new Set(), lastSentLen = -1, firstLinks = true;
+  let shownLinks = new Set(), lastSentLen = -1, firstLinks = true, pdfShown = false, lastOpen = '';
   const c = client('p', S => {
+    // PDF: liberado quando a apresentação chega ao último slide
+    if (!pdfShown && S.max >= N-1) {
+      pdfShown = true; const pp = $('#pdfP'); pp.classList.remove('hide');
+      if (S.i === N-1) { pp.classList.add('pop'); buzz([30,60,30]); toast('📄 O PDF da apresentação está liberado'); }
+    }
     $('#conn').className = 'dot on'; $('#conn').textContent = S.n + ' na sala';
     $('#nowT').textContent = SLIDES[S.i].title;
     // votação
@@ -3122,6 +3181,9 @@ function viewPlateia(){
       const key = S.i + ':' + v.open + ':' + v.counts.join(',') + ':' + mine;
       if (vb.dataset.k !== key) {
         vb.dataset.k = key;
+        const ok = S.i + ':' + v.open;
+        if (v.open && lastOpen !== ok) { buzz([20,40,20]); if (mine === undefined) toast('🗳️ Votação aberta: escolha uma opção'); setTimeout(() => vb.scrollIntoView({ behavior:'smooth', block:'center' }), 60); }
+        lastOpen = ok;
         vb.innerHTML = `<div class="panel vote-panel"><div class="lbl">${v.open ? '● Votação aberta' : 'Votação encerrada'}</div><b style="font-size:18px">${esc(sv.q)}</b>
           <div class="vopts">${sv.opts.map((o,k)=>{ const p = tot ? Math.round(v.counts[k]*100/tot) : 0; const show = mine!==undefined;
             return `<button data-o="${k}" class="${mine===k?'sel':''}" ${v.open?'':'disabled'}><div class="f" style="width:${show?p:0}%"></div><span>${esc(o)}</span>${show?`<em>${p}%</em>`:''}</button>`; }).join('')}</div></div>`;
@@ -3142,21 +3204,25 @@ function viewPlateia(){
       [...S.sent].reverse().forEach(i => { const b = h('<div class="mini"></div>'); gal.appendChild(b); mountStage(b).set(i, S); });
     }
   });
-  client.onSent = () => navigator.vibrate?.(40);
+  client.onSent = () => { buzz(40); toast('📲 Nova tela enviada pelo apresentador'); };
   $('#voteBox').addEventListener('click', e => {
     const b = e.target.closest('button[data-o]'); if (!b || !c.S) return;
     const o = +b.dataset.o; myVotes[c.S.i] = o; store.set('tv-votes-'+ROOM, JSON.stringify(myVotes));
-    c.T.send({ t:'v', i:c.S.i, o, uid:UID }); navigator.vibrate?.(20);
+    c.T.send({ t:'v', i:c.S.i, o, uid:UID }); buzz(20);
+    vb_sel(b);
   });
+  // marca o voto na hora, sem esperar o telão responder
+  function vb_sel(b){ b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === b)); }
+  $('#pdfA').addEventListener('click', () => { buzz(15); toast('Baixando o PDF…'); });
   let lastR = 0;
   document.querySelector('.react-bar').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     const now = Date.now(); if (now - lastR < 350) return; lastR = now;
-    c.T.send({ t:'r', e:b.dataset.e }); b.classList.add('pop'); setTimeout(()=>b.classList.remove('pop'),150); navigator.vibrate?.(15);
+    c.T.send({ t:'r', e:b.dataset.e }); b.classList.add('pop'); setTimeout(()=>b.classList.remove('pop'),150); buzz(15);
   });
   $('#qsend').onclick = () => {
     const t = $('#q').value.trim(); if (!t) return;
-    c.T.send({ t:'q', txt:t.slice(0,280) }); $('#q').value = ''; $('#qok').textContent = 'Enviada ✓';
+    c.T.send({ t:'q', txt:t.slice(0,280) }); $('#q').value = ''; $('#q').blur(); buzz(15); toast('Pergunta enviada ✓'); $('#qok').textContent = 'Enviada ✓';
     setTimeout(()=> $('#qok').textContent = '', 3000);
   };
   setInterval(() => { if (!c.alive()) { $('#conn').className = 'dot'; $('#conn').textContent = 'sem telão'; } }, 3000);
@@ -3184,6 +3250,8 @@ function viewPassador(){
     <p class="muted" id="nokey"></p>
   </div>
   <div class="navrow"><button class="btn" id="bPrev" aria-label="Voltar">◀</button><button class="btn gold" id="bNext">avançar ▶</button></div>`;
+  $('.grid4').insertAdjacentHTML('afterend', '<div class="swipe-hint">deslize para os lados fora da tela do slide para avançar ou voltar</div>');
+  stayAwake();
   if (!KEY) $('#nokey').textContent = 'Este link não tem a chave do apresentador (k=). Abra o passador pela página inicial.';
   const stage = mountStage($('#pad .stage-box'));
   const c = client('a', S => {
@@ -3206,8 +3274,19 @@ function viewPassador(){
     const S = c.S; if (S) $('#tm').textContent = S.started ? fmt((Date.now() - S.started)/1000) : '0:00';
     if (!c.alive()) { $('#conn').className = 'dot'; $('#conn').textContent = 'sem telão'; }
   }, 500);
-  const send = (a, x={}) => { c.T.send({ t:'c', k:KEY, a, ...x }); navigator.vibrate?.(12); };
-  $('#bNext').onclick = () => send('next'); $('#bPrev').onclick = () => send('prev');
+  const send = (a, x={}) => { c.T.send({ t:'c', k:KEY, a, ...x }); buzz(12); };
+  // evita pular dois slides com toque duplo
+  let lastNav = 0;
+  const nav = a => { const now = Date.now(); if (now - lastNav < 350) return; lastNav = now; send(a); };
+  $('#bNext').onclick = () => nav('next'); $('#bPrev').onclick = () => nav('prev');
+  // deslizar para os lados (fora do touchpad) avança/volta
+  let sx = 0, sy = 0, st = 0;
+  document.addEventListener('touchstart', e => { if (e.target.closest && e.target.closest('#pad, textarea, input')) { st = 0; return; } const t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now(); }, { passive:true });
+  document.addEventListener('touchend', e => {
+    if (!st) return; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Date.now() - st < 600 && Math.abs(dx) > 70 && Math.abs(dy) < 60) nav(dx < 0 ? 'next' : 'prev');
+    st = 0;
+  }, { passive:true });
   $('#bLaser').onclick = () => send('laser'); $('#bFocus').onclick = () => send('focus'); $('#bBlack').onclick = () => send('black');
   $('#bVote').onclick = () => send('vote'); $('#bSend').onclick = () => send('send'); $('#bTimer').onclick = () => send('timer');
   // touchpad
@@ -3246,6 +3325,7 @@ function viewRoteiro(){
       <div class="rt-nav"><button class="btn" id="bp">◀ voltar</button><button class="btn" id="bv">🗳️ votar</button><button class="btn" id="bb">⬛ preta</button><button class="btn gold" id="bn">avançar ▶</button></div>
     </div></div>`;
   const cur = mountStage($('#cur')), nxt = mountStage($('#nxt'));
+  stayAwake();
   let lastQ = -1, lastI = -1;
   const c = client('a', S => {
     $('#conn').className = 'dot on'; $('#conn').textContent = 'telão ok';
@@ -3284,6 +3364,21 @@ function viewRoteiro(){
   });
 }
 
+/* ======================= PDF (usado pelo render_pdf.py) ======================= */
+function viewPdf(){
+  document.body.className = 'v-pdf';
+  const root = $('#root');
+  root.innerHTML = SLIDES.map((_, i) => `<div class="pdf-page">${slideHTML(i)}</div>`).join('');
+  fillQR(root);
+  const host = (META.siteUrl || 'https://www.templovirtual.app').replace(/^https?:\/\/(www\.)?/, '');
+  root.querySelectorAll('[data-qr="plateia"] + .qr-cap').forEach(c => c.textContent = host);
+  root.querySelectorAll('[data-vote]').forEach(box => {
+    const i = [...root.children].indexOf(box.closest('.pdf-page'));
+    box.innerHTML = `<div class="pdf-opts">${SLIDES[i].vote.opts.map(o => `<span>${esc(o)}</span>`).join('')}</div>`;
+  });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(() => document.body.dataset.ready = '1', 300));
+}
+
 /* ======================= INÍCIO (lançador) ======================= */
 function viewInicio(){
   document.body.className = 'v-inicio';
@@ -3314,8 +3409,8 @@ function viewInicio(){
   $('#newRoom').onclick = () => { store.set('tv-room-'+META.key,''); store.set('tv-key-'+META.key,''); location.href = BASE; };
 }
 
-if (VIEW !== 'inicio' && !ROOM) { viewInicio(); return; }
-({ telao:viewTelao, plateia:viewPlateia, passador:viewPassador, roteiro:viewRoteiro }[VIEW] || viewInicio)();
+if (VIEW !== 'inicio' && VIEW !== 'pdf' && !ROOM) { viewInicio(); return; }
+({ telao:viewTelao, plateia:viewPlateia, passador:viewPassador, roteiro:viewRoteiro, pdf:viewPdf }[VIEW] || viewInicio)();
 })();
 </script>
 </body>

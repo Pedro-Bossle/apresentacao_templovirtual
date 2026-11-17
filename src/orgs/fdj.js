@@ -242,13 +242,13 @@ Abra a última votação: <b>seu Bethel toparia testar?</b>`,
   {
     title: 'Obrigado', time: 120, links: [L.fdj, L.site, L.doc],
     notes: `Agradeça e abra para perguntas. As perguntas enviadas pela plateia aparecem aqui no roteiro.
-Todos os links continuam no celular de cada uma.
+Os links e o PDF da apresentação ficam liberados no celular de cada uma.
 Pedro Bossle: pedro.bossle.s@gmail.com · Lucas Borges: lucasboeiraborges@gmail.com`,
     html: `<div class="cover">
   <div class="cover-l">
     <div class="kicker">OBRIGADO</div>
     <h1>Perguntas?</h1>
-    <p class="lead">Mande pelo celular ou levante a mão. Todos os links desta apresentação continuam no seu celular.</p>
+    <p class="lead">Mande pelo celular ou levante a mão. Os links e o PDF desta apresentação estão no seu celular.</p>
     <div class="contacts">
       <div><b>Pedro Bossle</b><span>programador e cofundador</span><span class="mono">pedro.bossle.s@gmail.com</span></div>
       <div><b>Lucas Borges</b><span>programador e cofundador</span><span class="mono">lucasboeiraborges@gmail.com</span></div>

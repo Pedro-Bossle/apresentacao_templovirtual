@@ -9,7 +9,7 @@ Cada apresentação tem quatro telas que conversam entre si em tempo real:
 | **Telão** | computador do projetor | slides, QR Code da plateia, reações, votações, laser e foco |
 | **Passador** | seu celular | avançar/voltar, laser, foco, tela preta, votar, enviar tela, zerar tempo |
 | **Roteiro** | notebook ou tablet | falas de cada slide, cronômetro, próximo slide e perguntas da plateia |
-| **Plateia** | celular do público (via QR Code) | slide atual, links citados, votação, telas enviadas, reações e perguntas |
+| **Plateia** | celular do público (via QR Code) | slide atual, links citados, votação, telas enviadas, reações, perguntas e, no fim, o PDF |
 
 Os links do passador e do roteiro levam a chave do apresentador (`k=`). Sem ela, ninguém controla a apresentação.
 
@@ -26,6 +26,12 @@ Os links do passador e do roteiro levam a chave do apresentador (`k=`). Sem ela,
 
 Sem `config.js` preenchido, tudo funciona em **modo ensaio**: telão, passador e roteiro sincronizam entre abas do mesmo navegador.
 
+## No celular
+
+- **Passador:** deslize para os lados (fora da miniatura do slide) para avançar ou voltar. Toque duplo não pula dois slides, a tela não apaga durante a apresentação e puxar para baixo não recarrega a página.
+- **Plateia:** o celular vibra e mostra um aviso quando abre uma votação ou chega uma tela enviada. Quando a apresentação chega ao último slide, aparece o botão **Baixar em PDF** no topo.
+- Nada é selecionável com toque longo (exceto o campo de pergunta), para não atrapalhar os toques.
+
 ## Atalhos do telão
 
 `→` / espaço / clique avança · `←` volta · `B` tela preta · `F` tela cheia
@@ -34,11 +40,13 @@ Sem `config.js` preenchido, tudo funciona em **modo ensaio**: telão, passador e
 
 Os slides ficam em `src/orgs/*.js` (título, tempo previsto, notas do roteiro, links citados, votação e HTML de cada slide). O visual fica em `src/template.html` e os temas por organização em `build.py`.
 
-Depois de editar, gere os HTMLs de novo:
+Depois de editar, gere os HTMLs e os PDFs de novo:
 
 ```bash
-python3 build.py            # todas
-python3 build.py fdj loja   # só algumas (odm, fdj, loja, oes)
+python3 build.py            # HTMLs: todas (ou: python3 build.py fdj loja)
+python3 render_pdf.py       # PDFs que a plateia baixa no fim (precisa do Playwright)
 ```
+
+Para o `render_pdf.py`: `pip install playwright && python3 -m playwright install chromium`.
 
 Cada HTML é autossuficiente (imagens e bibliotecas embutidas). Só o `config.js` fica separado, para trocar a conexão sem gerar tudo de novo.
