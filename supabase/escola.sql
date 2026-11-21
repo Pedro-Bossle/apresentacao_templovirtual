@@ -149,6 +149,9 @@ grant execute on function public.escola_sessao(text,text,text,text)   to anon, a
 grant execute on function public.escola_salvar(text,text,jsonb,jsonb) to anon, authenticated;
 grant execute on function public.escola_resultado(text,text)          to anon, authenticated;
 
+-- Faz a API do Supabase enxergar as funções na hora (sem isso pode dar "Could not find the function ... in the schema cache").
+notify pgrst, 'reload schema';
+
 -- Para desfazer:
 -- drop function if exists public.escola_resultado(text,text);
 -- drop function if exists public.escola_salvar(text,text,jsonb,jsonb);

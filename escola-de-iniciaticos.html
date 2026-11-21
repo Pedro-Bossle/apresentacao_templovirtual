@@ -365,17 +365,6 @@ code{font-family:var(--m);font-size:.92em;background:var(--inset);border:1px sol
 /* split com foto */
 .stage .esc-split{grid-template-columns:.78fr 1.22fr;gap:64px}
 .stage .esc-split:has(> div:first-child){grid-template-columns:1.2fr .8fr}
-.stage .bio{margin:0;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px 18px 22px;box-shadow:0 30px 70px var(--mock-shadow);transform:rotate(-1.2deg);max-width:440px;justify-self:center}
-.stage .bio img{display:block;width:100%;height:470px;object-fit:cover;object-position:top;border-radius:14px;border:3px solid var(--gold2)}
-.stage .bio figcaption{display:grid;gap:4px;margin-top:16px;font-size:19px;color:var(--mut)}
-.stage .bio figcaption b{font-family:var(--serif);font-size:28px;color:var(--tx);font-weight:600;margin-bottom:4px}
-.stage .photo{margin:0;justify-self:center;text-align:center}
-.stage .photo img{display:block;max-width:100%;max-height:560px;border-radius:20px;border:4px solid #fff;box-shadow:0 0 0 2px var(--gold2),0 34px 80px var(--mock-shadow);margin:0 auto}
-.stage .photo.tilt img{transform:rotate(1.2deg)}
-.stage .photo figcaption{font-size:19px;font-style:italic;color:var(--mut);margin-top:20px;max-width:620px;margin-left:auto;margin-right:auto;line-height:1.4}
-.stage .photo.vitral img{max-height:600px}
-.stage .photo.molay img{max-height:640px}
-.stage .photo.book img{max-height:600px;transform:rotate(2deg)}
 .stage .emb-hero{margin:0;display:grid;place-items:center}
 .stage .emb-hero img{max-width:520px;max-height:600px;filter:drop-shadow(0 30px 50px rgba(60,20,20,.25))}
 .stage .emb-hero.end img{max-width:380px;max-height:470px}
@@ -454,11 +443,6 @@ code{font-family:var(--m);font-size:.92em;background:var(--inset);border:1px sol
 .stage .rank div.p1{font-size:34px}
 
 /* ---- ajustes de tamanho (imagens pequenas do material original) ---- */
-.stage .photo img{height:500px;width:auto;max-width:720px;object-fit:cover}
-.stage .photo.tilt img{height:auto;width:680px;max-height:520px}
-.stage .photo.molay img{height:620px}
-.stage .photo.vitral img{height:600px}
-.stage .photo.book img{height:580px}
 .stage .emb-hero img{width:480px;height:auto}
 .stage .emb-hero.end img{width:360px}
 .stage .date-card > b{font-family:var(--serif);font-size:40px;color:var(--gold);white-space:nowrap}
@@ -477,9 +461,24 @@ code{font-family:var(--m);font-size:.92em;background:var(--inset);border:1px sol
 .stage .tl.big li::before{top:56px}
 .stage .tl.big b{font-size:34px}
 .stage .tl.big span{font-size:19px}
-.stage .photo.book img{height:520px}
 /* PDF leve: sem filtros (o Chrome rasteriza cada um em alta resolução) */
 body.v-pdf .stage *{filter:none!important}
+
+/* ---- fotos: moldura de tamanho fixo (--w × --h), recorte por object-position, sem esticar além da resolução ---- */
+.stage .esc-split{grid-template-columns:auto 1fr;gap:72px}
+.stage .esc-split:has(> div:first-child){grid-template-columns:1fr auto}
+.stage .photo{margin:0;justify-self:center;align-self:center;display:grid;justify-items:center;gap:16px}
+.stage .photo .frame{position:relative;width:var(--w);height:var(--h)}
+.stage .photo .frame::before{content:'';position:absolute;inset:14px -14px -14px 14px;border:2px solid var(--gold2);border-radius:18px;opacity:.7}
+.stage .photo .frame img{position:relative;display:block;width:100%;height:100%;object-fit:cover;border-radius:16px;box-shadow:0 24px 60px var(--mock-shadow)}
+.stage .photo figcaption{max-width:var(--w);margin-top:10px;text-align:center;font-size:18px;font-style:italic;line-height:1.4;color:var(--mut)}
+.stage .bio{margin:0;justify-self:center;align-self:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px 16px 20px;box-shadow:0 24px 60px var(--mock-shadow);width:calc(var(--w) + 34px)}
+.stage .bio img{display:block;width:var(--w);height:var(--h);object-fit:cover;border-radius:12px;border-bottom:4px solid var(--gold2)}
+.stage .bio figcaption{display:grid;gap:4px;margin-top:14px;font-size:18px;color:var(--mut)}
+.stage .bio figcaption b{font-family:var(--serif);font-size:26px;color:var(--tx);font-weight:600;margin-bottom:2px}
+/* ícones SVG da linha do tempo */
+.stage .tl i.is-ico{color:var(--gold);background:var(--acc-soft)}
+.stage .tl i .ico{width:56%;height:56%}
 
 </style>
 </head>
@@ -2843,6 +2842,7 @@ const META = {
   footTag:'LINHA DO TEMPO', siteUrl:'https://www.templovirtual.app',
   names:true,   // plateia entra com nome (lista de presença)
   db:true,      // grava presença e quiz nas tabelas escola_* do Supabase do Templo Virtual
+  quizAuto:3,   // a pergunta abre sozinha 3 s depois de o slide entrar (o passador ainda pode encerrar antes)
   emojis:['👏','❤️','🔥','🤯'],
 };
 // Escola de Iniciáticos · Ordem DeMolay · Linha do Tempo
@@ -2856,16 +2856,30 @@ const E = {
   discurso: { t: 'Vídeo · Discurso do Tio Mansur', u: 'https://www.youtube.com/watch?v=Ln0Bq0EoXVE' },
 };
 
+// Ano atual lido do dispositivo (o telão/celular), para a linha do tempo não ficar presa a um ano fixo.
+const ANO = new Date().getFullYear();
+
+// Ícones de traço (SVG), na cor do tema, no lugar dos emojis de exemplo.
+const svg = d => `<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICON = {
+  espadas: svg('<path d="M10 10l20 20M30 30l-4 4M30 30l4-4M28 32l6 6M8 8l4 1 17 17-3 3L9 12z"/><path d="M38 10L18 30M18 30l4 4M18 30l-4-4M20 32l-6 6M40 8l-4 1-17 17 3 3 17-17z"/>'),
+  globo: svg('<circle cx="24" cy="24" r="16"/><path d="M8 24h32M24 8c5 4.5 7 10 7 16s-2 11.5-7 16c-5-4.5-7-10-7-16s2-11.5 7-16z"/>'),
+  globoPin: svg('<circle cx="22" cy="26" r="14"/><path d="M8 26h28M22 12c4 4 6 9 6 14s-2 10-6 14c-4-4-6-9-6-14s2-10 6-14z"/><path d="M38 6a5 5 0 0 1 5 5c0 4-5 9-5 9s-5-5-5-9a5 5 0 0 1 5-5z" fill="currentColor" stroke="none"/>'),
+  jornal: svg('<rect x="8" y="10" width="26" height="30" rx="3"/><path d="M34 18h6v18a4 4 0 0 1-4 4H12"/><path d="M14 17h14M14 23h14M14 29h8M14 34h8"/><rect x="24" y="28" width="5" height="6"/>'),
+  escudo: svg('<path d="M24 6l15 5v11c0 10-7 17-15 20C16 39 9 32 9 22V11z"/><path d="M17 17l14 14M31 17L17 31"/>'),
+  escola: svg('<path d="M4 18l20-9 20 9-20 9z"/><path d="M12 22v10c0 3 5 6 12 6s12-3 12-6V22M44 18v12"/>'),
+};
 const pic = (k, cls='') => `<img class="pic ${cls}" src="${IMG[k]}" alt="">`;
+const photo = (k, w, h, cap='', pos='center top') => `<figure class="photo" style="--w:${w}px;--h:${h}px"><div class="frame"><img src="${IMG[k]}" alt="" style="object-position:${pos}"></div>${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
 const chap = (n, t) => `<div class="chap"><span>CAPÍTULO ${n}</span>${t}</div>`;
 const EXTRA = `<div class="extra">EXTRA</div>`;
 // Ficha de personagem: foto, nome, nascimento e falecimento
-const bio = (k, nome, nasc, lnasc, mor, lmor) => `<figure class="bio">${pic(k)}<figcaption><b>${nome}</b>
+const bio = (k, nome, nasc, lnasc, mor, lmor, w=340, h=420, pos='center top') => `<figure class="bio" style="--w:${w}px;--h:${h}px"><img src="${IMG[k]}" alt="" style="object-position:${pos}"><figcaption><b>${nome}</b>
   <span>★ ${nasc} · ${lnasc}</span><span>✝ ${mor} · ${lmor}</span></figcaption></figure>`;
 const quote = (txt, who) => `<blockquote class="quote">“${txt}”${who ? `<cite>${who}</cite>` : ''}</blockquote>`;
 // Linha do tempo: [ano, rótulo, ícone (IMG) ou emoji]
 const timeline = (items, cls='') => `<ol class="tl ${cls}">${items.map(([y, t, ic], k) =>
-  `<li style="--d:${k * 90}ms"><i>${IMG[ic] ? `<img src="${IMG[ic]}" alt="">` : ic}</i><b>${y}</b><span>${t}</span></li>`).join('')}</ol>`;
+  `<li style="--d:${k * 90}ms"><i class="${ICON[ic] ? 'is-ico' : ''}">${IMG[ic] ? `<img src="${IMG[ic]}" alt="">` : (ICON[ic] || ic)}</i><b>${y}</b><span>${t}</span></li>`).join('')}</ol>`;
 
 const SLIDES = [
   /* ============ ABERTURA ============ */
@@ -2873,13 +2887,13 @@ const SLIDES = [
     title: 'Escola de Iniciáticos', time: 75, links: [],
     notes: `Boa noite! Bem-vindos à <b>Escola de Iniciáticos</b>.
 <b>Antes de começar:</b> peguem o celular e apontem a câmera pro QR Code. Coloquem o nome (e o capítulo): isso já é a <b>lista de presença</b> de hoje e também o nome de vocês no ranking do quiz do final.
-Hoje a gente vai percorrer a linha do tempo da Ordem DeMolay: dos Templários, em 1119, até a Escola de Iniciáticos, em 2026.
+Hoje a gente vai percorrer a linha do tempo da Ordem DeMolay: dos Templários, em 1119, até a Escola de Iniciáticos, em ${ANO}.
 Espere o contador "na sala" subir antes de avançar.`,
     html: `<div class="cover esc-cover">
   <div class="cover-l">
     <div class="kicker">ESCOLA DE INICIÁTICOS</div>
     <h1>Ordem<br><em>DeMolay</em></h1>
-    <p class="lead">A linha do tempo da Ordem: dos Templários a 2026, passando por nove garotos, um homem e a chegada ao Brasil.</p>
+    <p class="lead">A linha do tempo da Ordem: dos Templários a ${ANO}, passando por nove garotos, um homem e a chegada ao Brasil.</p>
     <div class="faces">${['c_land','c_marshall','c_molay','c_lower','c_mansur'].map(k => `<img src="${IMG[k]}" alt="">`).join('')}</div>
   </div>
   <div class="cover-r"><div class="qr-big" data-qr="plateia"></div><div class="qr-cap">entre na sala e marque presença</div></div>
@@ -2904,16 +2918,16 @@ Comente o resultado. Se "quase nada" ganhar, ótimo: é exatamente pra isso que 
 <b>1914 a 1919:</b> a Primeira Guerra e a fundação da Ordem DeMolay, em Kansas City.
 <b>1979 a 1985:</b> a chegada ao Brasil, a primeira iniciação no Capítulo Rio de Janeiro nº 1 e o primeiro Supremo Conselho brasileiro.
 <b>2001 a 2019:</b> o Pergaminho de Chinon, a divisão e a unificação dos Supremos.
-<b>2026:</b> nós, aqui, na Escola de Iniciáticos.
+<b>${ANO}:</b> nós, aqui, na Escola de Iniciáticos.
 Use o botão <b>enviar tela</b> do passador: a linha do tempo vai pro celular de todos, para acompanharem.`,
     html: `<div class="center" style="justify-content:flex-start">
   <div class="kicker">LINHA DO TEMPO</div>
-  <h2>De <em>1119</em> a <em>2026</em>.</h2>
+  <h2>De <em>1119</em> a <em>${ANO}</em>.</h2>
   ${timeline([
     ['1119','Criação dos Templários','selo'], ['1307','Captura templária','molay_cena'], ['1314','Fim dos Templários','placa'],
-    ['1914','1ª Guerra Mundial','⚔️'], ['1919','Fundação da Ordem DeMolay','e1919'], ['1979','DeMolays no Brasil','brasil'],
+    ['1914','1ª Guerra Mundial','espadas'], ['1919','Fundação da Ordem DeMolay','e1919'], ['1979','DeMolays no Brasil','brasil'],
     ['1980','1ª iniciação brasileira · RJ nº 01','rj1_emb'], ['1985','Fundação do SCODB','scodb'], ['2001','Pergaminho de Chinon','pergaminho'],
-    ['2004','Fundação do SCODRFB','scodrfb'], ['2019','Unificação dos Supremos','scdb'], ['2026','Escola de Iniciáticos','emblema'],
+    ['2004','Fundação do SCODRFB','scodrfb'], ['2019','Unificação dos Supremos','scdb'], [String(ANO),'Escola de Iniciáticos','escola'],
   ], 'big')}
 </div>`,
   },
@@ -2954,7 +2968,7 @@ Esse idealismo, somado anos depois a um jovem com quem ele se identificou profun
     <p class="lead">empregos gerados até 1923, além de comida, mantimentos e roupas para as famílias atingidas pela Primeira Guerra.</p>
     ${quote('A Maçonaria tocava um acorde acolhedor. Parecia alguma coisa que estava instintivamente procurando.')}
   </div>
-  <figure class="photo tilt">${pic('carta')}</figure>
+  ${photo('carta', 600, 400, '', 'center')}
 </div>`,
   },
   {
@@ -2970,7 +2984,7 @@ Foi nesse cenário que o caminho de Frank Land cruzou com o de um desses jovens�
     <p class="lead">Jovens voltando das trincheiras, sem rumo e, muitos, sem os pais. Faltava quem os orientasse.</p>
     <p class="lead" style="font-style:italic">Foi nesse cenário que o tempo cruzaria o caminho de Frank Land com um desses jovens…</p>
   </div>
-  <figure class="photo vitral">${pic('vitral')}<figcaption>“I do so promise and vow” · Assim, prometo e juro</figcaption></figure>
+  ${photo('vitral', 470, 550, '“I do so promise and vow” · Assim, prometo e juro', 'center')}
 </div>`,
   },
   {
@@ -2981,7 +2995,7 @@ O pai, Elmer E. Lower, morreu após uma infecção na perna, causada por um acid
 Assim conheceu <b>Sam Freet</b>, da Loja Ivanhoe, que procurou Frank Land para ajudar o rapaz.
 O encontro foi amistoso. Ao apertar a mão de Louis, Frank pensou: <b>"Se eu tivesse um filho, eu gostaria que ele fosse como esse rapaz."</b>`,
     html: `${chap(1, 'O início de tudo')}<div class="split esc-split">
-  ${bio('lower', 'Louis Gordon Lower', '02/02/1902', 'Kansas City, EUA', '18/07/1943', 'Kansas City, EUA')}
+  ${bio('lower', 'Louis Gordon Lower', '02/02/1902', 'Kansas City, EUA', '18/07/1943', 'Kansas City, EUA', 320, 400)}
   <div>
     <div class="kicker">O PRIMEIRO DEMOLAY</div>
     <h2>O filho que Land<br><em>não teve</em>.</h2>
@@ -3038,7 +3052,7 @@ Em meio ao luto da guerra, um homem que preferiu guardar a honra diante de uma m
 Em <b>24 de março de 1919</b> era fundado o <b>"Conselho DeMolay"</b>.
 Abra a votação: que nome eles teriam escolhido? Feche antes de avançar.`,
     html: `${chap(2, 'A fundação')}<div class="split esc-split">
-  <figure class="photo molay">${pic('molay')}</figure>
+  ${photo('molay', 340, 470, 'Jacques de Molay · último Grão-Mestre templário', 'center top')}
   <div>
     <div class="kicker">JACQUES DE MOLAY · ÚLTIMO GRÃO-MESTRE TEMPLÁRIO</div>
     <h2>24/03/1919:<br>nasce o <em>Conselho DeMolay</em>.</h2>
@@ -3067,7 +3081,7 @@ Abra a votação: que nome eles teriam escolhido? Feche antes de avançar.`,
     ['1119','Hugo de Payens + 8 cavaleiros protegem os peregrinos','selo'],
     ['1129','Concílio de Troyes reconhece a Ordem','bernardo'],
     ['1189','Cerco de Acre: vitória','cruzada'],
-    ['1291','Cerco de Acre: derrota e fuga para Chipre','⚔️'],
+    ['1291','Cerco de Acre: derrota e fuga para Chipre','escudo'],
     ['1298','Jacques de Molay vira Grão-Mestre','c_molay'],
     ['1305','Clemente V eleito: o Rei e o Papa','clemente'],
     ['1307','Captura templária e falsas acusações','filipe'],
@@ -3095,7 +3109,7 @@ O link do livro já está no celular de todos.`,
     </ul>
     <p class="small" style="margin-top:26px">Leitura recomendada para o Comendador e o Cavaleiro da Grã-Cruz da Cavalaria. <b>O link está no seu celular.</b></p>
   </div>
-  <figure class="photo book">${pic('livro')}</figure>
+  ${photo('livro', 310, 476, 'Os Cavaleiros da Távola Redonda', 'center')}
 </div>`,
   },
   {
@@ -3106,7 +3120,7 @@ A resposta foi <b>Frank Arthur Marshall</b>, da Loja Ivanhoe, conhecido pelo tal
 Pelo Ritual, os membros transmitem ideais e virtudes de forma única, com um juramento pessoal e muito estímulo à expressividade.
 Em <b>27 de setembro de 1919</b>, o Grau Iniciático e o Grau DeMolay foram executados pela primeira vez, com grande sucesso.`,
     html: `${chap(2, 'A fundação')}<div class="split esc-split">
-  ${bio('marshall', 'Frank Arthur Marshall', '13/11/1865', 'Leavenworth, EUA', '24/03/1931', 'Kansas City, EUA')}
+  ${bio('marshall', 'Frank Arthur Marshall', '13/11/1865', 'Leavenworth, EUA', '24/03/1931', 'Kansas City, EUA', 300, 362)}
   <div>
     <div class="kicker">O AUTOR DO RITUAL</div>
     <h2>“Ela tem<br>um <em>Ritual</em>.”</h2>
@@ -3127,9 +3141,9 @@ Presidentes, congressistas, juízes e militares do seu círculo se tornaram cola
   <div>
     <div class="kicker">“DAD” LAND</div>
     <h2>De nove jovens<br>a <em>milhões</em>.</h2>
-    ${timeline([['1924','EUA e Canadá','e1920'],['1959','Austrália','🇦🇺'],['1960','Japão e Alemanha','🌍'],['1979','Brasil','brasil']], 'small')}
+    ${timeline([['1924','EUA e Canadá','e1920'],['1959','Austrália','globoPin'],['1960','Japão e Alemanha','globo'],['1979','Brasil','brasil']], 'small')}
   </div>
-  <figure class="photo tilt">${pic('roosevelt')}<figcaption>Franklin D. Roosevelt recebe de Frank Land o título de Grande Mestre Honorário (1934)</figcaption></figure>
+  ${photo('roosevelt', 640, 478, 'Franklin D. Roosevelt recebe de Frank Land o título de Grande Mestre Honorário (1934)', 'center')}
 </div>`,
   },
   {
@@ -3139,7 +3153,7 @@ Frank Sherman Land faleceu em <b>8 de novembro de 1959</b>, aos 69 anos. Nunca f
 No leito de morte, com a esposa e a irmã, disse suas últimas palavras: <b>"É só o começo."</b>
 Leia a citação do slide com calma. Use o <b>foco</b> do passador se quiser destacar a última frase.`,
     html: `${chap(3, 'Expansão')}<div class="split esc-split">
-  <figure class="photo">${pic('land_velho')}<figcaption>Frank S. Land · 1890 – 1959</figcaption></figure>
+  ${photo('land_velho', 340, 430, 'Frank S. Land · 1890 – 1959', 'center top')}
   <div>
     <div class="kicker">08/11/1959 · ÚLTIMAS PALAVRAS</div>
     <h2 class="huge">“É só o <em>começo</em>.”</h2>
@@ -3166,7 +3180,7 @@ Entre os clientes, conheceu <b>Chaia Chainferber</b>, da Loja Maçônica <b>Perf
 Sem saber, Chaia tomou uma das decisões mais importantes da história da Maçonaria no Brasil: propôs o nome de Alberto Mansur para iniciação na sua Loja.
 Leia a frase dele: <b>"Nós não queremos de vocês Super Heróis… queremos homens simples, pondo em prática essas sete virtudes. Nós poderemos mudar o Mundo!"</b>`,
     html: `${chap(4, 'No Brasil')}<div class="split esc-split">
-  ${bio('mansur', 'Alberto Mansur', '07/09/1922', 'Vargem Alegre, RJ', '17/07/2012', 'Rio de Janeiro, RJ')}
+  ${bio('mansur', 'Alberto Mansur', '07/09/1922', 'Vargem Alegre, RJ', '17/07/2012', 'Rio de Janeiro, RJ', 360, 420, '50% 20%')}
   <div>
     <div class="kicker">ALBERTO MANSUR</div>
     <h2>Homens simples,<br><em>sete virtudes</em>.</h2>
@@ -3188,7 +3202,7 @@ Quis trazer esse modelo ao Brasil: o que ele chamava de <b>"congraçamento da fa
     <h2>O “congraçamento da<br><em>família maçônica</em>”.</h2>
     <div class="fam"><div><b>Homens</b>Ordem Maçônica</div><div><b>Mulheres</b>Estrela do Oriente</div><div><b>Filhas</b>Filhas de Jó</div><div class="me"><b>Jovens</b>Ordem DeMolay</div></div>
   </div>
-  <figure class="photo tilt">${pic('mansur2')}</figure>
+  ${photo('mansur2', 380, 500, 'Alberto Mansur', 'center top')}
 </div>`,
   },
   {
@@ -3200,10 +3214,10 @@ A foto é da instalação da 92ª gestão do Capítulo Rio de Janeiro nº 01, em
     html: `${chap(4, 'No Brasil')}<div class="split esc-split">
   <div>
     <div class="kicker">A ORDEM DEMOLAY CHEGA AO BRASIL</div>
-    ${timeline([['1969','Mansur lê sobre a Ordem no The New Age','📰'],['1979','Autorização em Kansas City: Oficial Executivo','e1949'],['1980','59 jovens iniciados no Capítulo RJ nº 1','rj1_emb']], 'small')}
+    ${timeline([['1969','Mansur lê sobre a Ordem no The New Age','jornal'],['1979','Autorização em Kansas City: Oficial Executivo','e1949'],['1980','59 jovens iniciados no Capítulo RJ nº 1','rj1_emb']], 'small')}
     <div class="date-card"><b>16/08/1980</b><span>Primeira iniciação: o 1º capítulo do Brasil e da América Latina</span></div>
   </div>
-  <figure class="photo tilt">${pic('rj1')}<figcaption>Instalação da 92ª gestão do Capítulo Rio de Janeiro nº 01 · 31/01/2026</figcaption></figure>
+  ${photo('rj1', 640, 410, 'Instalação da 92ª gestão do Capítulo Rio de Janeiro nº 01 · 31/01/2026', 'center')}
 </div>`,
   },
 
@@ -3248,7 +3262,7 @@ Em <b>8 de dezembro de 2019</b>, em Brasília, no Centro Nacional de Liderança 
 Os dois links já estão no celular de todos. Se der tempo, passe um trecho do discurso.
 A foto é de Mansur com a corte Chevalier.`,
     html: `${EXTRA}<div class="split esc-split">
-  <figure class="photo tilt">${pic('chevalier')}<figcaption>Mansur e a corte Chevalier</figcaption></figure>
+  ${photo('chevalier', 640, 426, 'Mansur e a corte Chevalier', 'center')}
   <div>
     <div class="kicker">OUTROS MOMENTOS DE ALBERTO MANSUR</div>
     <h2>O “Tio <em>Mansur</em>”.</h2>
@@ -3264,7 +3278,7 @@ A foto é de Mansur com a corte Chevalier.`,
     notes: `Agora é a <b>fixação de conteúdo</b>: um quiz de 10 perguntas, valendo ranking.
 Quem ainda não colocou o nome no celular, coloque agora. Sem nome não dá para responder.
 Regras: cada pergunta abre por <b>20 segundos</b>. Acertou, ganha de 500 a 1000 pontos: <b>quanto mais rápido, mais pontos</b>. Errou, zero.
-Em cada pergunta: leia em voz alta, toque <b>abrir quiz</b> no passador, espere o tempo acabar (ou todos responderem) e comente a resposta certa.`,
+Cada pergunta <b>abre sozinha</b> 3 segundos depois de entrar no slide. Leia em voz alta, espere o tempo acabar (ou todos responderem) e comente a resposta certa. O botão <b>encerrar</b> do passador fecha antes, se precisar.`,
     html: `<div class="cover">
   <div class="cover-l">
     <div class="kicker">FIXAÇÃO DE CONTEÚDO</div>
@@ -3301,8 +3315,8 @@ Em cada pergunta: leia em voz alta, toque <b>abrir quiz</b> no passador, espere 
       exp:'O <b>Supremo Conselho DeMolay Brasil (SCDB)</b>, criado pelo Tratado de Unificação de 08/12/2019.' },
   ].map((quiz, k) => ({
     title: `Quiz ${k+1} · ${quiz.q.replace(/[“”]/g,'"')}`, time: 45, links: [], quiz: { t: 20, ...quiz },
-    notes: `Leia a pergunta em voz alta e toque <b>abrir quiz</b> no passador (ou no roteiro).
-A pergunta fecha sozinha em 20 segundos, ou quando todos responderem.
+    notes: `A pergunta <b>abre sozinha</b> em 3 segundos. Leia em voz alta.
+Ela fecha em 20 segundos, ou quando todos responderem (o <b>encerrar</b> do passador fecha antes).
 <b>Resposta certa: ${['A','B','C','D'][quiz.ok]}) ${quiz.opts[quiz.ok]}</b>
 ${quiz.exp}`,
   })),
@@ -3623,6 +3637,8 @@ function viewTelao(){
     S.i = i; S.max = Math.max(S.max, i); S.slideAt = Date.now(); S.focus = false; S.laser = false;
     if (!S.started && i > 0) S.started = Date.now();
     push();
+    if (META.quizAuto !== undefined && S.quiz && S.quiz[i] && S.quiz[i].st === 'idle')
+      setTimeout(() => { if (S.i === i && S.quiz[i].st === 'idle') quizToggle(); }, META.quizAuto * 1000);
   };
   const spawn = e => {
     if (!EMOJIS.includes(e)) return;
@@ -3823,7 +3839,7 @@ function viewPlateia(){
     if (q.st === 'open' && lastQOpen !== ok && mine === undefined) { buzz([20,40,20]); toast('❓ Pergunta aberta: responda rápido!'); setTimeout(() => qb.scrollIntoView({ behavior:'smooth', block:'start' }), 60); }
     lastQOpen = ok;
     const head = `<div class="lbl">${q.st === 'open' ? '● Responda agora' : q.st === 'done' ? 'Resposta' : 'Fixação de conteúdo'}</div><b style="font-size:18px">${z.q}</b>`;
-    if (q.st === 'idle') { qb.innerHTML = `<div class="panel vote-panel">${head}<p class="muted" style="margin:8px 0 0">${named ? 'Prepare-se: a pergunta abre em instantes. Quanto mais rápido acertar, mais pontos.' : 'Coloque seu nome acima para participar.'}</p></div>`; return; }
+    if (q.st === 'idle') { qb.innerHTML = `<div class="panel vote-panel">${head}<div class="qbtns locked">${z.opts.map((o,j) => `<button class="k${j}" disabled><i>${LETTERS[j]}</i><span>${o}</span></button>`).join('')}</div><p class="muted" style="margin:10px 0 0">${named ? 'A pergunta abre em instantes. Quanto mais rápido acertar, mais pontos.' : 'Coloque seu nome acima para participar.'}</p></div>`; return; }
     let fb = '';
     if (q.st === 'done') {
       const me = S.sc && S.sc[UID];

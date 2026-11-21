@@ -3277,6 +3277,8 @@ function viewTelao(){
     S.i = i; S.max = Math.max(S.max, i); S.slideAt = Date.now(); S.focus = false; S.laser = false;
     if (!S.started && i > 0) S.started = Date.now();
     push();
+    if (META.quizAuto !== undefined && S.quiz && S.quiz[i] && S.quiz[i].st === 'idle')
+      setTimeout(() => { if (S.i === i && S.quiz[i].st === 'idle') quizToggle(); }, META.quizAuto * 1000);
   };
   const spawn = e => {
     if (!EMOJIS.includes(e)) return;
@@ -3477,7 +3479,7 @@ function viewPlateia(){
     if (q.st === 'open' && lastQOpen !== ok && mine === undefined) { buzz([20,40,20]); toast('❓ Pergunta aberta: responda rápido!'); setTimeout(() => qb.scrollIntoView({ behavior:'smooth', block:'start' }), 60); }
     lastQOpen = ok;
     const head = `<div class="lbl">${q.st === 'open' ? '● Responda agora' : q.st === 'done' ? 'Resposta' : 'Fixação de conteúdo'}</div><b style="font-size:18px">${z.q}</b>`;
-    if (q.st === 'idle') { qb.innerHTML = `<div class="panel vote-panel">${head}<p class="muted" style="margin:8px 0 0">${named ? 'Prepare-se: a pergunta abre em instantes. Quanto mais rápido acertar, mais pontos.' : 'Coloque seu nome acima para participar.'}</p></div>`; return; }
+    if (q.st === 'idle') { qb.innerHTML = `<div class="panel vote-panel">${head}<div class="qbtns locked">${z.opts.map((o,j) => `<button class="k${j}" disabled><i>${LETTERS[j]}</i><span>${o}</span></button>`).join('')}</div><p class="muted" style="margin:10px 0 0">${named ? 'A pergunta abre em instantes. Quanto mais rápido acertar, mais pontos.' : 'Coloque seu nome acima para participar.'}</p></div>`; return; }
     let fb = '';
     if (q.st === 'done') {
       const me = S.sc && S.sc[UID];
