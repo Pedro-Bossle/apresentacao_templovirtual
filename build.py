@@ -1,7 +1,8 @@
 import base64, os, sys
 
 D = os.path.dirname(os.path.abspath(__file__))
-FILES = {'odm': 'demolay.html', 'fdj': 'filhas-de-jo.html', 'loja': 'lojas.html', 'oes': 'estrela-do-oriente.html'}
+FILES = {'odm': 'demolay.html', 'fdj': 'filhas-de-jo.html', 'loja': 'lojas.html', 'oes': 'estrela-do-oriente.html',
+         'esc': 'escola-de-iniciaticos.html'}
 sb_url = os.environ.get('SB_URL', '')
 sb_key = os.environ.get('SB_KEY', '')
 
@@ -26,8 +27,16 @@ def build(org, out):
         for ext, mime in MIMES.items():
             if os.path.exists(os.path.join(D, f'src/img/{n}{ext}')):
                 imgs[n] = uri(f'src/img/{n}{ext}', mime); break
-    for n in ['overview', 'secretaria', 'tesouraria', 'gestao', 'comissoes', 'odm', 'fdj', 'loja']:
-        imgs[n] = uri(f'src/img/{n}.webp', 'image/webp')
+    if org == 'esc':
+        # Escola de Iniciáticos: só as imagens dela (src/img/esc), e o emblema vira a logo
+        folder = os.path.join(D, 'src/img/esc')
+        for fn in sorted(os.listdir(folder)):
+            n, ext = os.path.splitext(fn)
+            if ext in MIMES: imgs[n] = uri(f'src/img/esc/{fn}', MIMES[ext])
+        imgs.setdefault('logo', imgs['emblema'])  # logo.webp pequena = rodapé leve
+    else:
+        for n in ['overview', 'secretaria', 'tesouraria', 'gestao', 'comissoes', 'odm', 'fdj', 'loja']:
+            imgs[n] = uri(f'src/img/{n}.webp', 'image/webp')
 
     html = html.replace('@@LIB_QR@@', safe_js(rd('src/vendor/qrcode.js')))
     html = html.replace('@@LIB_SB@@', safe_js(rd('src/vendor/supabase.js')))
@@ -55,9 +64,13 @@ def build(org, out):
       --inset:#120e24; --on-acc:#1a1200; --btn:#221a3b; --chip:rgba(14,11,28,.85); --acc-soft:rgba(242,194,48,.14); --deco1:#3b6fd8; --deco2:#d8413a;
       --stage-bg:radial-gradient(1100px 650px at 88% 115%,rgba(59,111,216,.30),transparent 60%),radial-gradient(800px 520px at 0% -10%,rgba(216,65,58,.14),transparent 60%),radial-gradient(700px 400px at 50% 130%,rgba(58,168,100,.12),transparent 60%),#0e0b1c;
     ''', '#0e0b1c', 'Templo Virtual · Apresentação Estrela do Oriente'),
+     'esc': ('', '#fffdf9', 'Escola de Iniciáticos · Ordem DeMolay · Linha do tempo'),  # tema em src/orgs/esc.css
     }
     css, tc, title = THEMES[org]
-    html = html.replace('@@THEME_CSS@@', (':root{' + css + '}') if css else '').replace('@@THEME_COLOR@@', tc).replace('@@TITLE@@', title)
+    css = (':root{' + css + '}') if css else ''
+    if os.path.exists(os.path.join(D, f'src/orgs/{org}.css')):
+        css = rd(f'src/orgs/{org}.css') + '\n' + css
+    html = html.replace('@@THEME_CSS@@', css).replace('@@THEME_COLOR@@', tc).replace('@@TITLE@@', title)
     html = html.replace('@@SB_URL@@', sb_url).replace('@@SB_KEY@@', sb_key)
     left = [t for t in ['@@IMG_', '@@LIB_', '@@SLIDES@@'] if t in html]
     assert not left, left

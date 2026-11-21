@@ -279,6 +279,56 @@ body.v-pdf *{animation:none!important;transition:none!important}
 .okbox{background:rgba(76,195,138,.08);border:1px solid rgba(76,195,138,.35);border-radius:14px;padding:14px 16px;font-size:14px;margin-top:18px}
 code{font-family:var(--m);font-size:.92em;background:var(--inset);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
 @media (max-width:860px){body.v-roteiro .rt{grid-template-columns:1fr;height:auto}.notes{font-size:19px}}
+
+/* ============ QUIZ AO VIVO (slides com quiz:{...}) ============ */
+:root{--qa:#e5484d;--qb:#2f6fdb;--qc:#e5a50a;--qd:#2f9e5b}
+.stage .quiz{width:100%;display:grid;grid-template-columns:1fr 300px;gap:50px;align-items:center}
+.stage .quiz h2{font-size:58px}
+.stage .qopts{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:10px}
+.stage .qopt{display:flex;align-items:center;gap:22px;border-radius:22px;padding:26px 28px;font-size:31px;line-height:1.2;color:#fff;font-weight:500;position:relative;overflow:hidden;min-height:124px;transition:opacity .4s,transform .4s,filter .4s}
+.stage .qopt i{flex:none;width:62px;height:62px;border-radius:14px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:30px}
+.stage .qopt .qbar{position:absolute;left:0;bottom:0;height:10px;background:rgba(255,255,255,.75);width:0;transition:width .6s}
+.stage .qopt b{margin-left:auto;font-family:var(--m);font-size:26px;font-weight:500}
+.stage .qopt.k0{background:var(--qa)} .stage .qopt.k1{background:var(--qb)} .stage .qopt.k2{background:var(--qc)} .stage .qopt.k3{background:var(--qd)}
+.stage .qopts.done .qopt{opacity:.28;filter:saturate(.4)}
+.stage .qopts.done .qopt.ok{opacity:1;filter:none;transform:scale(1.03);box-shadow:0 0 0 5px var(--tx),0 20px 50px rgba(0,0,0,.25)}
+.stage .qopts.done .qopt.ok::after{content:'✓';position:absolute;right:22px;top:12px;font-size:34px}
+.stage .qside{text-align:center}
+.stage .qring{width:260px;height:260px;margin:0 auto 20px;position:relative}
+.stage .qring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.stage .qring span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--m);font-size:86px;color:var(--tx)}
+.stage .qring span.small{font-size:30px;letter-spacing:.1em}
+.stage .qcount{font-family:var(--m);font-size:22px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
+.stage .qcount b{display:block;font-size:64px;color:var(--gold);letter-spacing:0;font-weight:500}
+.stage .qexp{margin-top:26px;font-size:26px;line-height:1.4;color:var(--tx2);background:var(--card);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:16px;padding:18px 24px;opacity:0;transition:opacity .5s}
+.stage .qexp.on{opacity:1}
+.stage .rank{width:100%;max-width:1150px;display:grid;gap:12px;margin-top:16px}
+.stage .rank div{display:grid;grid-template-columns:70px 1fr auto 150px;align-items:center;gap:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 26px;font-size:30px;text-align:left}
+.stage .rank div i{font-style:normal;font-family:var(--m);color:var(--mut)}
+.stage .rank div small{font-size:20px;color:var(--mut)}
+.stage .rank div b{font-family:var(--m);font-weight:500;color:var(--gold);text-align:right}
+.stage .rank div.p1{border-color:var(--gold);background:linear-gradient(90deg,var(--acc-soft),var(--card) 70%);font-size:36px}
+.stage .rank div.p1 i,.stage .rank div.p2 i,.stage .rank div.p3 i{font-size:34px}
+.stage .rank .empty{display:block;text-align:center;color:var(--mut);font-size:26px;padding:40px}
+/* plateia: entrada com nome e quiz */
+.join-panel{border-color:var(--gold2)}
+.join-panel input{margin-top:8px}
+.qbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.qbtns button{min-height:96px;border:0;border-radius:16px;color:#fff;font-size:16px;font-weight:600;padding:12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;text-align:left;transition:transform .1s,opacity .3s}
+.qbtns button i{font-style:normal;font-size:22px;opacity:.85}
+.qbtns button.k0{background:var(--qa)} .qbtns button.k1{background:var(--qb)} .qbtns button.k2{background:var(--qc)} .qbtns button.k3{background:var(--qd)}
+.qbtns.locked button{opacity:.3} .qbtns.locked button.sel{opacity:1;box-shadow:0 0 0 3px var(--tx)}
+.qbtns.done button.ok{opacity:1;box-shadow:0 0 0 3px var(--ok)}
+.qfeed{margin-top:12px;font-size:17px;line-height:1.4}
+.qfeed b{font-size:22px;display:block}
+.qtime{height:6px;background:var(--inset);border-radius:9px;overflow:hidden;margin-top:10px}
+.qtime i{display:block;height:100%;background:var(--gold);transition:width .25s linear}
+.myscore{display:flex;justify-content:space-between;align-items:center;font-family:var(--m);font-size:13px;color:var(--mut)}
+.myscore b{color:var(--gold);font-size:18px}
+.report{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+.report th,.report td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.report th{font-family:var(--m);font-size:11px;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.report td.n{font-family:var(--m);text-align:right}
 </style>
 <style>@@THEME_CSS@@</style>
 </head>
@@ -317,7 +367,12 @@ const $ = (sel, el=document) => el.querySelector(sel);
 const h = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
 const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
 const TOTAL_PLAN = SLIDES.reduce((a,s)=>a+s.time,0);
-const EMOJIS = ['👏','❤️','🔥','🤯'];
+const EMOJIS = META.emojis || ['👏','❤️','🔥','🤯'];
+const BRAND = META.brand || 'Templo Virtual';
+const HOST = META.host || 'TEMPLOVIRTUAL.APP';
+const QUIZ = SLIDES.some(s => s.quiz);
+const LETTERS = ['A','B','C','D','E','F'];
+const quizPts = (ok, ms, lim) => ok ? Math.round(500 + 500 * Math.max(0, 1 - ms / (lim * 1000))) : 0;
 
 let ROOM = (qs.get('s') || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12);
 let KEY = (qs.get('k') || '').replace(/[^a-zA-Z0-9]/g,'').slice(0,32);
@@ -347,7 +402,7 @@ function transport(onMsg, onConn){
       });
     };
     Promise.resolve(sb.realtime.setAuth && sb.realtime.setAuth()).catch(() => {}).then(() => open(true));
-    return { mode:'online', send: m => { if (ok && ch) ch.send({ type:'broadcast', event:'m', payload:m }); } };
+    return { mode:'online', sb, send: m => { if (ok && ch) ch.send({ type:'broadcast', event:'m', payload:m }); } };
   }
   const bc = new BroadcastChannel('templo-apres-' + META.key + '-' + ROOM);
   bc.onmessage = e => onMsg(e.data);
@@ -359,8 +414,50 @@ function transport(onMsg, onConn){
 const DECO = `<svg class="deco" viewBox="0 0 1100 420" fill="none"><path d="M0 400 C 380 380 700 250 1100 60" stroke="var(--deco1)" stroke-width="2.5" opacity=".9"/><path d="M80 420 C 460 395 760 285 1100 120" stroke="var(--deco2)" stroke-width="1.5" opacity=".55"/><path d="M200 420 C 560 405 830 320 1100 185" stroke="var(--deco1)" stroke-width="1" opacity=".35"/></svg>`;
 function slideHTML(i){
   const s = SLIDES[i];
-  return `<div class="stage">${DECO}<div class="body">${s.html}</div>
-    <div class="foot"><img src="${LOGO}" alt=""><span>TEMPLO VIRTUAL${META.footTag ? ' · ' + META.footTag : ''}</span><span class="sp"></span><span>TEMPLOVIRTUAL.APP · ${String(i+1).padStart(2,'0')}/${String(N).padStart(2,'0')}</span>${i===0||i===N-1?'':'<div class="qr-mini" data-qr="plateia"></div>'}</div></div>`;
+  return `<div class="stage${s.cls ? ' ' + s.cls : ''}">${DECO}<div class="body">${s.quiz ? quizHTML(i) : s.html}</div>
+    <div class="foot"><img src="${LOGO}" alt=""><span>${BRAND.toUpperCase()}${META.footTag ? ' · ' + META.footTag : ''}</span><span class="sp"></span><span>${HOST} · ${String(i+1).padStart(2,'0')}/${String(N).padStart(2,'0')}</span>${i===0||i===N-1?'':'<div class="qr-mini" data-qr="plateia"></div>'}</div></div>`;
+}
+/* Slide de quiz: pergunta + 4 alternativas coloridas + relógio. O estado vem do telão. */
+function quizHTML(i){
+  const z = SLIDES[i].quiz, nq = SLIDES.filter(s => s.quiz).length, k = SLIDES.slice(0, i+1).filter(s => s.quiz).length;
+  return `<div class="quiz" data-quiz="${i}"><div>
+    <div class="kicker">FIXAÇÃO DE CONTEÚDO · PERGUNTA ${k} DE ${nq}</div>
+    <h2>${z.q}</h2>
+    <div class="qopts">${z.opts.map((o,j) => `<div class="qopt k${j}${j===z.ok?' ok':''}"><i>${LETTERS[j]}</i><span>${o}</span><b></b><div class="qbar"></div></div>`).join('')}</div>
+    <div class="qexp">${z.exp || ''}</div></div>
+    <div class="qside"><div class="qring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--line2)" stroke-width="8"/><circle class="qarc" cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/></svg><span>${z.t || 20}</span></div>
+    <div class="qcount"><b>0</b>respostas</div></div></div>`;
+}
+/* Atualiza um slide de quiz já montado. off = diferença de relógio (telão - este aparelho). */
+function renderQuiz(el, i, st, off=0){
+  const box = el.querySelector('[data-quiz]'); if (!box) return;
+  const z = SLIDES[i].quiz, lim = z.t || 20;
+  const q = (st && st.quiz && st.quiz[i]) || { st:'idle', counts: z.opts.map(()=>0), n:0 };
+  const left = q.st === 'open' ? Math.max(0, (q.ends - (Date.now() + off)) / 1000) : (q.st === 'done' ? 0 : lim);
+  const sp = box.querySelector('.qring span'), arc = box.querySelector('.qarc');
+  if (q.st === 'done') { sp.textContent = 'FIM'; sp.className = 'small'; }
+  else if (q.st === 'idle') { sp.textContent = lim + 's'; sp.className = 'small'; }
+  else { sp.textContent = Math.ceil(left); sp.className = ''; }
+  arc.style.strokeDashoffset = (276.5 * (1 - left / lim)).toFixed(1);
+  arc.style.stroke = q.st === 'open' && left <= 5 ? 'var(--bad)' : 'var(--gold)';
+  box.querySelector('.qcount b').textContent = q.n;
+  const opts = box.querySelector('.qopts'); opts.classList.toggle('done', q.st === 'done');
+  const tot = q.counts.reduce((a,b)=>a+b,0);
+  box.querySelectorAll('.qopt').forEach((o,j) => {
+    const p = q.st === 'done' && tot ? Math.round(q.counts[j]*100/tot) : 0;
+    o.querySelector('.qbar').style.width = p + '%';
+    o.querySelector('b').textContent = q.st === 'done' ? q.counts[j] : '';
+  });
+  box.querySelector('.qexp').classList.toggle('on', q.st === 'done' && !!z.exp);
+}
+function renderRank(el, st){
+  el.querySelectorAll('[data-rank]').forEach(box => {
+    const r = (st && st.rank) || [];
+    const sig = JSON.stringify(r); if (box.dataset.sig === sig) return; box.dataset.sig = sig;
+    const lim = +box.dataset.rank || 10, md = ['🥇','🥈','🥉'];
+    box.innerHTML = r.length ? r.slice(0, lim).map((p,k) => `<div class="p${k+1}"><i>${md[k] || (k+1)+'º'}</i><span>${esc(p.n)}</span><small>${p.c ? esc(p.c) + ' · ' : ''}${p.h} ${p.h===1?'acerto':'acertos'}</small><b>${p.p}</b></div>`).join('')
+      : '<span class="empty">O ranking aparece aqui conforme as respostas chegam.</span>';
+  });
 }
 const QR_CACHE = {};
 function fillQR(el){
@@ -399,7 +496,7 @@ function mountStage(box){
         box.innerHTML = slideHTML(i); keep.forEach(k => box.firstElementChild.appendChild(k));
         fillQR(box); cur = i; fit();
       }
-      if (st) renderVote(box, i, st);
+      if (st) { renderVote(box, i, st); if (SLIDES[i].quiz) renderQuiz(box, i, st, st._off || 0); renderRank(box, st); }
     },
     get stage(){ return box.firstElementChild; },
     fit,
@@ -408,7 +505,7 @@ function mountStage(box){
 
 /* ---------- utilidades de celular ---------- */
 const PDF_URL = BASE.replace(/\.html?$/i, '') + '.pdf';
-const PDF_NAME = 'Templo Virtual - ' + META.name + '.pdf';
+const PDF_NAME = BRAND + ' - ' + META.name + '.pdf';
 let wakeLock = null;
 async function keepAwake(){
   try { if ('wakeLock' in navigator && document.visibilityState === 'visible' && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => wakeLock = null); } } catch {}
@@ -438,6 +535,70 @@ function viewTelao(){
   SLIDES.forEach((s,i) => { if (s.vote) S.votes[i] = { open:false, counts:s.vote.opts.map(()=>0) }; });
   EMOJIS.forEach(e => S.rx[e] = 0);
 
+  /* ---- quiz e lista de presença (só nos decks que usam) ---- */
+  S.quiz = {}; S.rank = []; S.sc = {}; S.np = 0;
+  SLIDES.forEach((s,i) => { if (s.quiz) S.quiz[i] = { st:'idle', ends:0, at:0, counts:s.quiz.opts.map(()=>0), n:0 }; });
+  const players = {};   // uid -> { n, c, p, h }
+  const answers = {};   // slide -> { uid: {o, ms, ok, pts} }
+  const qPend = { p:{}, r:[] }; // fila para o banco
+  const DB = !!(META.db && ONLINE);
+  let sessOk = false;
+  const rerank = () => {
+    const arr = Object.entries(players).map(([u,p]) => ({ u, n:p.n, c:p.c || '', p:p.p, h:p.h }))
+      .sort((a,b) => b.p - a.p || b.h - a.h || a.n.localeCompare(b.n));
+    S.sc = {}; arr.forEach((p,k) => S.sc[p.u] = [p.p, k+1]);
+    S.rank = arr.slice(0, 10).map(({n,c,p,h}) => ({n,c,p,h})); S.np = arr.length;
+  };
+  const addPlayer = (uid, n, c, fromDb) => {
+    uid = String(uid).slice(0,16); n = String(n || '').trim().slice(0,60); c = String(c || '').trim().slice(0,60);
+    if (uid.length < 4 || !n) return false;
+    const p = players[uid];
+    if (p && p.n === n && p.c === c) return false;
+    if (p) { p.n = n; p.c = c; } else players[uid] = { n, c, p:0, h:0 };
+    if (!fromDb) qPend.p[uid] = { uid, nome:n, capitulo:c };
+    rerank(); return true;
+  };
+  const quizToggle = () => {
+    const q = S.quiz[S.i]; if (!q) return false;
+    const lim = (SLIDES[S.i].quiz.t || 20) * 1000;
+    if (q.st === 'idle') { q.st = 'open'; q.at = Date.now(); q.ends = q.at + lim; }
+    else if (q.st === 'open') quizClose(S.i);
+    push(); return true;
+  };
+  const quizClose = i => { const q = S.quiz[i]; if (q && q.st === 'open') { q.st = 'done'; q.ends = Date.now(); rerank(); push(); } };
+  const quizAnswer = m => {
+    const i = +m.i|0, q = S.quiz[i], o = +m.o|0, uid = typeof m.uid === 'string' ? m.uid.slice(0,16) : '';
+    if (!q || q.st !== 'open' || !players[uid] || o < 0 || o >= q.counts.length) return;
+    const a = answers[i] || (answers[i] = {}); if (a[uid]) return;
+    const z = SLIDES[i].quiz, ms = Math.max(0, Date.now() - q.at), ok = o === z.ok, pts = quizPts(ok, ms, z.t || 20);
+    a[uid] = { o, ms, ok, pts }; q.counts[o]++; q.n++;
+    players[uid].p += pts; if (ok) players[uid].h++;
+    qPend.r.push({ uid, q:i, o, ok, ms, pts });
+    if (q.n >= S.np && S.np > 0) quizClose(i); else push();
+  };
+  // Retoma presença e respostas do banco (se o telão for recarregado no meio da aula)
+  async function dbRestore(){
+    try {
+      const { data, error } = await T.sb.rpc('escola_resultado', { p_sala:ROOM, p_chave:KEY });
+      if (error) throw error; sessOk = true;
+      (data.participantes || []).forEach(p => addPlayer(p.uid, p.nome, p.capitulo, true));
+      (data.respostas || []).forEach(r => {
+        const q = S.quiz[r.q], pl = players[r.uid]; if (!q || !pl) return;
+        const a = answers[r.q] || (answers[r.q] = {}); if (a[r.uid]) return;
+        a[r.uid] = { o:r.o, ms:r.ms, ok:r.ok, pts:r.pts }; q.counts[r.o] = (q.counts[r.o]||0) + 1; q.n++; q.st = 'done';
+        pl.p += r.pts; if (r.ok) pl.h++;
+      });
+      rerank(); push();
+    } catch (e) { console.warn('[escola] banco indisponível:', e && e.message || e); }
+  }
+  async function dbFlush(){
+    const p = Object.values(qPend.p), r = qPend.r.splice(0);
+    if (!sessOk || (!p.length && !r.length)) { qPend.r.unshift(...r); return; }
+    qPend.p = {};
+    const { error } = await T.sb.rpc('escola_salvar', { p_sala:ROOM, p_chave:KEY, p_participantes:p, p_respostas:r });
+    if (error) { console.warn('[escola] não gravou, tento de novo:', error.message); p.forEach(x => qPend.p[x.uid] = qPend.p[x.uid] || x); qPend.r.unshift(...r); }
+  }
+
   const layers = {
     black: h('<div class="layer black"></div>'),
     focus: h('<svg class="layer focus" viewBox="0 0 1600 900" preserveAspectRatio="none"><defs><mask id="fm"><rect width="1600" height="900" fill="#fff"/><circle id="fc" cx="800" cy="450" r="190" fill="#000"/></mask></defs><rect width="1600" height="900" fill="rgba(0,0,0,.78)" mask="url(#fm)"/><circle id="fr" cx="800" cy="450" r="190" fill="none" stroke="var(--gold)" stroke-width="3" opacity=".8"/></svg>'),
@@ -465,7 +626,11 @@ function viewTelao(){
     ['fc','fr'].forEach(id => { const c = layers.focus.querySelector('#'+id); c.setAttribute('cx',x); c.setAttribute('cy',y); });
   };
 
-  const publicState = () => ({ t:'st', i:S.i, max:S.max, black:S.black, focus:S.focus, laser:S.laser, votes:S.votes, sent:S.sent, started:S.started, slideAt:S.slideAt, n:S.n, rx:S.rx, qs:S.qs, now:Date.now() });
+  const publicState = () => {
+    const o = { t:'st', i:S.i, max:S.max, black:S.black, focus:S.focus, laser:S.laser, votes:S.votes, sent:S.sent, started:S.started, slideAt:S.slideAt, n:S.n, rx:S.rx, qs:S.qs, now:Date.now() };
+    if (QUIZ || META.names) Object.assign(o, { quiz:S.quiz, rank:S.rank, sc:S.sc, np:S.np });
+    return o;
+  };
   let pend; const push = () => { draw(); clearTimeout(pend); pend = setTimeout(() => T.send(publicState()), 60); };
 
   const go = i => {
@@ -492,7 +657,7 @@ function viewTelao(){
       case 'laser': S.laser = !S.laser; if (S.laser) S.focus = false; push(); break;
       case 'focus': S.focus = !S.focus; if (S.focus) S.laser = false; push(); break;
       case 'ptr': S.px = Math.max(0,Math.min(1,+m.x||0)); S.py = Math.max(0,Math.min(1,+m.y||0)); drawPtr(); break;
-      case 'vote': { const v = S.votes[S.i]; if (v) { v.open = !v.open; push(); } break; }
+      case 'vote': { if (quizToggle()) break; const v = S.votes[S.i]; if (v) { v.open = !v.open; push(); } break; }
       case 'send': if (!S.sent.includes(S.i)) S.sent.push(S.i); push(); T.send({ t:'sent', i:S.i }); break;
       case 'timer': S.started = Date.now(); S.slideAt = Date.now(); push(); break;
       case 'clearq': S.qs = []; push(); break;
@@ -502,7 +667,12 @@ function viewTelao(){
     if (!m || typeof m !== 'object') return;
     if (m.t === 'c') { if (KEY && m.k === KEY) cmd(m); return; }
     if (m.t === 'hello') { T.send(publicState()); return; }
-    if (m.t === 'hb' && typeof m.uid === 'string') { if (m.role === 'p') seen.set(m.uid.slice(0,16), Date.now()); return; }
+    if (m.t === 'hb' && typeof m.uid === 'string') {
+      if (m.role === 'p') seen.set(m.uid.slice(0,16), Date.now());
+      if (META.names && typeof m.nm === 'string' && m.nm.trim()) { if (addPlayer(m.uid, m.nm, m.cp)) push(); }
+      return;
+    }
+    if (m.t === 'a') { quizAnswer(m); return; }
     if (m.t === 'r') { spawn(m.e); clearTimeout(pend); pend = setTimeout(() => T.send(publicState()), 400); return; }
     if (m.t === 'v') {
       const i = +m.i|0, v = S.votes[i], opt = +m.o|0;
@@ -523,6 +693,11 @@ function viewTelao(){
     if (n !== S.n) { S.n = n; draw(); }
     T.send(publicState());
   }, 3000);
+  if (QUIZ) setInterval(() => {
+    const q = S.quiz[S.i]; if (!q || q.st !== 'open') return;
+    if (Date.now() >= q.ends) quizClose(S.i); else renderQuiz(stage.stage, S.i, S);
+  }, 200);
+  if (DB && T.sb && KEY) { dbRestore(); setInterval(dbFlush, 4000); addEventListener('pagehide', dbFlush); }
 
   addEventListener('keydown', e => {
     if (['ArrowRight','PageDown',' ','Enter'].includes(e.key)) { e.preventDefault(); go(S.i+1); }
@@ -541,15 +716,15 @@ function client(role, onState){
   let S = null, last = 0;
   const T = transport(m => {
     if (!m || typeof m !== 'object') return;
-    if (m.t === 'st') { S = m; last = Date.now(); onState(S, m); }
+    if (m.t === 'st') { m._off = (m.now || Date.now()) - Date.now(); S = m; last = Date.now(); onState(S, m); }
     else if (m.t === 'sent' && client.onSent) client.onSent(m.i);
   }, ok => { if (ok) T.send({ t:'hello' }); });
-  const hb = () => T.send({ t:'hb', uid:UID, role });
+  const hb = () => { const x = { t:'hb', uid:UID, role }; if (role === 'p' && META.names && store.get('tv-nome')) { x.nm = store.get('tv-nome'); x.cp = store.get('tv-cap') || ''; } T.send(x); };
   setInterval(hb, 5000); setTimeout(hb, 600);
   setInterval(() => { if (Date.now() - last > 9000) T.send({ t:'hello' }); }, 4000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { T.send({ t:'hello' }); hb(); } });
   addEventListener('online', () => { T.send({ t:'hello' }); hb(); });
-  return { T, get S(){ return S; }, alive: () => Date.now() - last < 10000 };
+  return { T, hb, get S(){ return S; }, alive: () => Date.now() - last < 10000 };
 }
 
 /* ======================= PLATEIA ======================= */
@@ -557,8 +732,10 @@ function viewPlateia(){
   document.body.className = 'v-plateia';
   const root = $('#root');
   root.innerHTML = `<div class="app">
-    <div class="top"><img src="${LOGO}" alt=""><div class="t"><b>Templo Virtual</b><span>apresentação ao vivo</span></div><span class="dot" id="conn">conectando</span></div>
+    <div class="top"><img src="${LOGO}" alt=""><div class="t"><b>${esc(BRAND)}</b><span>apresentação ao vivo</span></div><span class="dot" id="conn">conectando</span></div>
     <div class="panel"><span class="tag">CELULAR DA PLATEIA</span><div class="nowbox"><small>agora na tela</small><b id="nowT">Aguardando o telão…</b></div></div>
+    ${META.names ? `<div class="panel join-panel" id="joinP"></div>` : ''}
+    <div id="quizBox"></div>
     <div class="panel pdf-panel hide" id="pdfP"><div class="lbl">Fim da apresentação</div><b>Leve a apresentação com você</b><span class="muted">Todos os slides num PDF, para rever depois ou repassar a quem não veio.</span>
       <a class="btn gold" id="pdfA" href="${PDF_URL}" download="${esc(PDF_NAME)}">⬇ Baixar em PDF</a></div>
     <div id="voteBox"></div>
@@ -567,7 +744,7 @@ function viewPlateia(){
     <div class="panel"><div class="lbl">Pergunte ou comente este slide</div>
       <textarea id="q" rows="2" maxlength="280" placeholder="Sua pergunta vai pro roteiro do apresentador"></textarea>
       <div class="row" style="margin-top:8px"><span class="muted" id="qok" style="flex:1"></span><button class="btn gold" id="qsend">Enviar</button></div></div>
-    <p class="muted" style="text-align:center;margin-top:18px"><a href="https://www.templovirtual.app" target="_blank" rel="noopener">templovirtual.app</a></p>
+    <p class="muted" style="text-align:center;margin-top:18px"><a href="${esc(META.siteUrl || 'https://www.templovirtual.app')}" target="_blank" rel="noopener">${esc((META.siteUrl || 'https://www.templovirtual.app').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</a></p>
   </div>
   <div class="react-bar"><div class="in">${EMOJIS.map(e=>`<button data-e="${e}" aria-label="Reagir ${e}">${e}</button>`).join('')}</div></div>`;
   const myVotes = JSON.parse(store.get('tv-votes-'+ROOM) || '{}');
@@ -580,6 +757,7 @@ function viewPlateia(){
     }
     $('#conn').className = 'dot on'; $('#conn').textContent = S.n + ' na sala';
     $('#nowT').textContent = SLIDES[S.i].title;
+    renderJoin(); renderMyQuiz(S);
     // votação
     const v = S.votes[S.i], sv = SLIDES[S.i].vote, vb = $('#voteBox');
     if (v && sv && (v.open || myVotes[S.i] !== undefined)) {
@@ -619,6 +797,75 @@ function viewPlateia(){
   });
   // marca o voto na hora, sem esperar o telão responder
   function vb_sel(b){ b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === b)); }
+  /* ---- nome (lista de presença) e quiz no celular ---- */
+  const myAns = JSON.parse(store.get('tv-quiz-'+ROOM) || '{}');
+  let joinEdit = false, lastQKey = '', lastQOpen = '';
+  function renderJoin(){
+    const jp = $('#joinP'); if (!jp) return;
+    const nm = store.get('tv-nome') || '', cp = store.get('tv-cap') || '';
+    const S = c && c.S, me = S && S.sc && S.sc[UID];
+    const key = [joinEdit, nm, cp, me ? me.join(':') : '', S ? S.np : ''].join('|');
+    if (jp.dataset.k === key) return; jp.dataset.k = key;
+    if (!nm || joinEdit) {
+      if (jp.dataset.mode === 'form') return; // não apaga o que a pessoa está digitando
+      jp.dataset.mode = 'form';
+      jp.innerHTML = `<div class="lbl">Lista de presença</div><b style="font-size:18px">Como você se chama?</b>
+        <span class="muted" style="display:block;margin-top:2px">Seu nome entra na presença e no ranking do quiz.</span>
+        <input type="text" id="jn" maxlength="60" placeholder="Nome e sobrenome" autocomplete="name" value="${esc(nm)}">
+        <input type="text" id="jc" maxlength="60" placeholder="Capítulo (opcional)" value="${esc(cp)}">
+        <button class="btn gold" id="jok" style="width:100%;margin-top:10px;height:50px">Entrar na sala</button>`;
+      return;
+    }
+    jp.dataset.mode = 'ok';
+    jp.innerHTML = `<div class="myscore"><span>✓ <b style="font-size:15px;color:var(--tx)">${esc(nm)}</b>${cp ? ' · ' + esc(cp) : ''}</span><button class="btn" id="jed" style="padding:4px 10px;font-size:12px">trocar</button></div>
+      ${QUIZ && me ? `<div class="myscore" style="margin-top:8px"><span>quiz</span><span><b>${me[0]}</b> pts · ${me[1]}º de ${S.np}</span></div>` : ''}`;
+  }
+  $('#root').addEventListener('click', e => {
+    if (e.target.id === 'jed') { joinEdit = true; renderJoin(); setTimeout(() => $('#jn') && $('#jn').focus(), 50); }
+    if (e.target.id === 'jok') {
+      const n = $('#jn').value.trim().replace(/\s+/g,' '); if (n.length < 2) { $('#jn').focus(); toast('Digite seu nome'); return; }
+      store.set('tv-nome', n.slice(0,60)); store.set('tv-cap', $('#jc').value.trim().slice(0,60));
+      joinEdit = false; c.hb(); buzz(20); toast('Presença registrada ✓'); renderJoin(); if (c.S) renderMyQuiz(c.S, true);
+    }
+  });
+  function renderMyQuiz(S, force){
+    const qb = $('#quizBox'), z = SLIDES[S.i].quiz, q = S.quiz && S.quiz[S.i];
+    if (!z || !q) { qb.innerHTML = ''; lastQKey = ''; return; }
+    const mine = myAns[S.i], named = !META.names || !!store.get('tv-nome');
+    const key = [S.i, q.st, mine, named, q.st === 'done' && S.sc && S.sc[UID] ? S.sc[UID].join(':') : ''].join('|');
+    if (!force && key === lastQKey) return; lastQKey = key;
+    const ok = S.i + ':' + q.st;
+    if (q.st === 'open' && lastQOpen !== ok && mine === undefined) { buzz([20,40,20]); toast('❓ Pergunta aberta: responda rápido!'); setTimeout(() => qb.scrollIntoView({ behavior:'smooth', block:'start' }), 60); }
+    lastQOpen = ok;
+    const head = `<div class="lbl">${q.st === 'open' ? '● Responda agora' : q.st === 'done' ? 'Resposta' : 'Fixação de conteúdo'}</div><b style="font-size:18px">${z.q}</b>`;
+    if (q.st === 'idle') { qb.innerHTML = `<div class="panel vote-panel">${head}<p class="muted" style="margin:8px 0 0">${named ? 'Prepare-se: a pergunta abre em instantes. Quanto mais rápido acertar, mais pontos.' : 'Coloque seu nome acima para participar.'}</p></div>`; return; }
+    let fb = '';
+    if (q.st === 'done') {
+      const me = S.sc && S.sc[UID];
+      fb = mine === undefined ? `<div class="qfeed"><b>⏱️ Não deu tempo</b>A certa era <b style="display:inline;font-size:17px">${LETTERS[z.ok]}</b>.</div>`
+        : mine === z.ok ? `<div class="qfeed"><b>✅ Acertou!</b>${me ? `Você está em ${me[1]}º lugar, com ${me[0]} pontos.` : ''}</div>`
+        : `<div class="qfeed"><b>❌ Não foi dessa vez</b>A certa era <b style="display:inline;font-size:17px">${LETTERS[z.ok]}</b>.${me ? ` Você está em ${me[1]}º lugar.` : ''}</div>`;
+      if (z.exp) fb += `<p class="muted" style="margin:8px 0 0">${z.exp}</p>`;
+    } else if (mine !== undefined) fb = `<div class="qfeed muted">Resposta registrada. Aguarde o fim do tempo…</div>`;
+    else if (!named) fb = `<div class="qfeed muted">Coloque seu nome acima para responder.</div>`;
+    const cls = q.st === 'done' ? 'locked done' : (mine !== undefined || !named ? 'locked' : '');
+    qb.innerHTML = `<div class="panel vote-panel">${head}
+      ${q.st === 'open' ? '<div class="qtime"><i id="qt"></i></div>' : ''}
+      <div class="qbtns ${cls}">${z.opts.map((o,j) => `<button data-qa="${j}" class="k${j}${mine===j?' sel':''}${j===z.ok && q.st==='done'?' ok':''}" ${cls?'disabled':''}><i>${LETTERS[j]}</i><span>${o}</span></button>`).join('')}</div>${fb}</div>`;
+  }
+  $('#quizBox').addEventListener('click', e => {
+    const b = e.target.closest('button[data-qa]'); const S = c.S; if (!b || !S) return;
+    const q = S.quiz && S.quiz[S.i]; if (!q || q.st !== 'open' || myAns[S.i] !== undefined) return;
+    if (META.names && !store.get('tv-nome')) { toast('Coloque seu nome primeiro'); return; }
+    const o = +b.dataset.qa; myAns[S.i] = o; store.set('tv-quiz-'+ROOM, JSON.stringify(myAns));
+    c.hb(); c.T.send({ t:'a', i:S.i, o, uid:UID }); buzz(25); renderMyQuiz(S, true);
+  });
+  setInterval(() => {
+    const S = c.S, t = $('#qt'); if (!S || !t) return;
+    const q = S.quiz && S.quiz[S.i], z = SLIDES[S.i].quiz; if (!q || !z || q.st !== 'open') return;
+    const left = Math.max(0, q.ends - (Date.now() + (S._off||0))); t.style.width = (left / ((z.t||20)*1000) * 100) + '%';
+  }, 250);
+  renderJoin();
   $('#pdfA').addEventListener('click', () => { buzz(15); toast('Baixando o PDF…'); });
   let lastR = 0;
   document.querySelector('.react-bar').addEventListener('click', e => {
@@ -668,8 +915,16 @@ function viewPassador(){
     $('#nx').textContent = S.i < N-1 ? SLIDES[S.i+1].title : 'Fim da apresentação';
     $('#qn').textContent = S.qs.length ? `💬 ${S.qs.length} pergunta(s) no roteiro` : '';
     $('#bLaser').classList.toggle('on', S.laser); $('#bFocus').classList.toggle('on', S.focus); $('#bBlack').classList.toggle('on', S.black);
-    const v = S.votes[S.i]; $('#bVote').disabled = !v; $('#bVote').classList.toggle('on', !!(v && v.open));
-    $('#bVote').lastChild.textContent = v && v.open ? 'fechar' : 'votar';
+    const v = S.votes[S.i], qz = S.quiz && S.quiz[S.i];
+    if (qz) {
+      $('#bVote').disabled = qz.st === 'done'; $('#bVote').classList.toggle('on', qz.st === 'open');
+      $('#bVote').firstChild.textContent = '❓';
+      $('#bVote').lastChild.textContent = qz.st === 'idle' ? 'abrir quiz' : qz.st === 'open' ? `encerrar ${qz.n}/${S.np}` : 'encerrada';
+    } else {
+      $('#bVote').disabled = !v; $('#bVote').classList.toggle('on', !!(v && v.open));
+      $('#bVote').firstChild.textContent = '🗳️';
+      $('#bVote').lastChild.textContent = v && v.open ? 'fechar' : 'votar';
+    }
     $('#bSend').classList.toggle('on', S.sent.includes(S.i));
     $('#pad').classList.toggle('focus', S.focus);
     $('#ptr').style.display = (S.laser || S.focus) ? 'block' : 'none';
@@ -737,14 +992,16 @@ function viewRoteiro(){
     $('#conn').className = 'dot on'; $('#conn').textContent = 'telão ok';
     cur.set(S.i, S); if (S.i < N-1) { nxt.set(S.i+1, S); $('#nxt').classList.remove('hide'); $('#nxT').textContent = SLIDES[S.i+1].title; } else { $('#nxt').classList.add('hide'); $('#nxT').textContent = 'fim'; }
     if (S.i !== lastI) { lastI = S.i; $('#title').textContent = SLIDES[S.i].title; $('#notes').innerHTML = SLIDES[S.i].notes; $('#notes').scrollTop = 0; }
-    $('#step').textContent = `${String(S.i+1).padStart(2,'0')}/${N} · ${SLIDES[S.i].vote ? 'votação · ' : ''}${S.black ? 'tela preta · ' : ''}${S.focus ? 'foco · ' : ''}${S.laser ? 'laser' : ''}`;
+    $('#step').textContent = `${String(S.i+1).padStart(2,'0')}/${N} · ${SLIDES[S.i].vote ? 'votação · ' : ''}${SLIDES[S.i].quiz ? 'quiz · ' : ''}${S.np ? S.np + ' na presença · ' : ''}${S.black ? 'tela preta · ' : ''}${S.focus ? 'foco · ' : ''}${S.laser ? 'laser' : ''}`;
     $('#room').textContent = S.n + ' na sala';
     $('#rx').innerHTML = EMOJIS.map(e => `<span>${e}<b>${S.rx[e]||0}</b></span>`).join('');
     if (S.qs.length !== lastQ) {
       lastQ = S.qs.length;
       $('#qs').innerHTML = S.qs.length ? [...S.qs].reverse().map(q => `<div><small>slide ${q.i+1} · ${new Date(q.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</small>${esc(q.txt)}</div>`).join('') : '<p class="muted">Nenhuma ainda.</p>';
     }
-    $('#bv').disabled = !S.votes[S.i]; $('#bv').textContent = S.votes[S.i] && S.votes[S.i].open ? '🗳️ fechar votação' : '🗳️ votar';
+    const qz = S.quiz && S.quiz[S.i];
+    if (qz) { $('#bv').disabled = qz.st === 'done'; $('#bv').textContent = qz.st === 'idle' ? '❓ abrir pergunta' : qz.st === 'open' ? `❓ encerrar (${qz.n}/${S.np})` : '❓ encerrada'; }
+    else { $('#bv').disabled = !S.votes[S.i]; $('#bv').textContent = S.votes[S.i] && S.votes[S.i].open ? '🗳️ fechar votação' : '🗳️ votar'; }
     $('#bb').classList.toggle('on', S.black);
   });
   const planUntil = i => SLIDES.slice(0, i+1).reduce((a,s)=>a+s.time,0);
@@ -782,6 +1039,12 @@ function viewPdf(){
     const i = [...root.children].indexOf(box.closest('.pdf-page'));
     box.innerHTML = `<div class="pdf-opts">${SLIDES[i].vote.opts.map(o => `<span>${esc(o)}</span>`).join('')}</div>`;
   });
+  // quiz no PDF: vira material de estudo, com a alternativa certa marcada e a explicação
+  root.querySelectorAll('[data-quiz]').forEach(box => {
+    const i = +box.dataset.quiz; box.querySelector('.qopts').classList.add('done'); box.querySelector('.qexp').classList.add('on');
+    box.querySelector('.qside').innerHTML = `<div class="qcount"><b>${LETTERS[SLIDES[i].quiz.ok]}</b>resposta certa</div>`;
+  });
+  root.querySelectorAll('[data-rank]').forEach(box => box.innerHTML = '<span class="empty">O ranking é montado ao vivo, com as respostas da turma.</span>');
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(() => document.body.dataset.ready = '1', 300));
 }
 
@@ -795,7 +1058,7 @@ function viewInicio(){
     ${qr ? `<div class="qrbox">${qrSvg(urlFor(v,key))}</div>` : ''}
     <div class="row"><a class="btn gold" href="${urlFor(v,key)}" target="_blank" rel="noopener" style="text-decoration:none">Abrir</a><button class="btn" data-copy="${urlFor(v,key)}">Copiar link</button></div></div>`;
   $('#root').innerHTML = `<div class="launch">
-    <div class="top"><img src="${LOGO}" alt="" style="width:46px;height:46px"><div class="t"><b>Templo Virtual · ${esc(META.name)}</b><span>apresentação ao vivo · ${N} slides · ~${Math.round(TOTAL_PLAN/60)} min</span></div></div>
+    <div class="top"><img src="${LOGO}" alt="" style="width:46px;height:46px"><div class="t"><b>${esc(BRAND)} · ${esc(META.name)}</b><span>apresentação ao vivo · ${N} slides · ~${Math.round(TOTAL_PLAN/60)} min</span></div></div>
     <h1>Sala <span class="mono" style="color:var(--gold)">${esc(ROOM)}</span></h1>
     <p class="muted">Abra o <b>telão</b> no computador ligado ao projetor (F = tela cheia). Escaneie o <b>passador</b> com o seu celular. O <b>roteiro</b> fica no notebook ou num tablet. A plateia entra pelo QR Code do telão.</p>
     ${ONLINE ? `<div class="okbox">● Modo online: celulares e telão sincronizam pela internet.</div>` :
@@ -806,8 +1069,37 @@ function viewInicio(){
       ${card('ROTEIRO', 'Roteiro', 'Notas de cada slide, cronômetro, próximo slide e as perguntas da plateia.', 'roteiro', true, false)}
       ${card('PLATEIA', 'Plateia', 'O que o público vê no celular. Não tem a chave, então não controla nada.', 'plateia', false, true)}
     </div>
+    ${META.db ? `<div class="panel" style="margin-top:16px"><span class="tag">TURMA</span><h3 style="margin:4px 0 6px">Presença e notas do quiz</h3>
+      <p class="muted" style="margin:0 0 10px">Quem entrou pelo celular e quanto fez no quiz de fixação desta sala. Fica salvo no banco do Templo Virtual (tabelas <code>escola_*</code>).</p>
+      <div class="row"><button class="btn gold" id="rpLoad">Ver turma</button><button class="btn" id="rpCsv" disabled>Baixar planilha (CSV)</button></div>
+      <div id="rpOut"></div></div>` : ''}
     <p class="muted" style="margin-top:22px">O link do passador e do roteiro tem a chave do apresentador. Não compartilhe. <button class="btn" id="newRoom" style="margin-left:8px">Nova sala</button></p>
   </div>`;
+  if (META.db) {
+    let rows = [];
+    $('#rpLoad').onclick = async () => {
+      const out = $('#rpOut');
+      if (!ONLINE) { out.innerHTML = '<p class="warn">A turma só é salva no modo online (Supabase configurado).</p>'; return; }
+      out.innerHTML = '<p class="muted">Carregando…</p>';
+      try {
+        const sb = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, { auth:{ persistSession:false } });
+        const { data, error } = await sb.rpc('escola_resultado', { p_sala:ROOM, p_chave:KEY });
+        if (error) throw error;
+        rows = data.participantes || [];
+        $('#rpCsv').disabled = !rows.length;
+        out.innerHTML = rows.length ? `<table class="report"><tr><th>#</th><th>Nome</th><th>Capítulo</th><th>Acertos</th><th>Pontos</th></tr>${rows.map((r,k) => `<tr><td class="n">${k+1}</td><td>${esc(r.nome)}</td><td>${esc(r.capitulo || '')}</td><td class="n">${r.acertos}/${SLIDES.filter(x=>x.quiz).length}</td><td class="n">${r.pontos}</td></tr>`).join('')}</table>`
+          : '<p class="muted">Ninguém entrou nesta sala ainda.</p>';
+      } catch (e) {
+        out.innerHTML = `<p class="warn">Não consegui ler a turma: ${esc(e.message || e)}. Confira se o <code>supabase/escola.sql</code> foi aplicado no projeto.</p>`;
+      }
+    };
+    $('#rpCsv').onclick = () => {
+      const nq = SLIDES.filter(x=>x.quiz).length, cell = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+      const csv = ['Posição;Nome;Capítulo;Entrou em;Acertos;Perguntas;Pontos'].concat(rows.map((r,k) => [k+1, r.nome, r.capitulo || '', new Date(r.entrou_em).toLocaleString('pt-BR'), r.acertos, nq, r.pontos].map(cell).join(';'))).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type:'text/csv;charset=utf-8' }));
+      a.download = `${META.name} - turma ${ROOM}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    };
+  }
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-copy]'); if (!b) return;
     navigator.clipboard?.writeText(b.dataset.copy).then(() => { b.textContent = 'Copiado ✓'; setTimeout(()=> b.textContent='Copiar link', 1500); });
